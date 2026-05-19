@@ -1,0 +1,2135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="InterviewAI — AI-powered mock interviews, practice sessions, scoring and history.">
+<meta name="theme-color" content="#07070f">
+<!-- Open Graph -->
+<meta property="og:title" content="InterviewAI — Practice Smarter" />
+<meta property="og:description" content="AI-powered mock interviews, instant scoring, and progress tracking." />
+<meta property="og:type" content="website" />
+<link rel="manifest" href="manifest.json">
+<title>InterviewAI — Login & Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070f;
+  --bg2: #0e0e1a;
+  --bg3: #141426;
+  --surface: #1a1a2e;
+  --surface2: #20203a;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #7c6fff;
+  --accent2: #a78bfa;
+  --accent3: #34d399;
+  --text: #eeeeff;
+  --text2: #8888aa;
+  --text3: #44445a;
+  --gold: #fbbf24;
+  --red: #f87171;
+  --green: #34d399;
+  --r: 14px;
+  --r-sm: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+h1,h2,h3,h4,.brand{font-family:'Syne',sans-serif;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:3px;}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;}
+.page.active{display:flex;}
+
+/* ── AUTH LAYOUT ── */
+.auth-page{align-items:stretch;}
+.auth-left{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:4rem;background:var(--bg2);position:relative;overflow:hidden;
+}
+.auth-left-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 50%, rgba(124,111,255,0.12) 0%, transparent 65%);
+  pointer-events:none;
+}
+.auth-left .brand{font-size:1.5rem;font-weight:800;margin-bottom:3rem;position:relative;}
+.auth-left .brand span{color:var(--accent2);}
+.auth-tagline{position:relative;}
+.auth-tagline h2{font-size:2.4rem;font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:1rem;}
+.auth-tagline h2 em{font-style:normal;color:var(--accent2);}
+.auth-tagline p{color:var(--text2);font-size:1rem;line-height:1.7;font-weight:300;max-width:380px;margin-bottom:2.5rem;}
+.auth-perks{display:flex;flex-direction:column;gap:0.9rem;}
+.perk{display:flex;align-items:center;gap:0.8rem;}
+.perk-icon{
+  width:36px;height:36px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+}
+.pi-p{background:rgba(124,111,255,0.15);}
+.pi-g{background:rgba(52,211,153,0.12);}
+.pi-y{background:rgba(251,191,36,0.12);}
+.pi-r{background:rgba(248,113,113,0.12);}
+.perk p{font-size:0.88rem;color:var(--text2);}
+
+.auth-right{
+  width:480px;display:flex;flex-direction:column;justify-content:center;
+  padding:3rem 3.5rem;background:var(--bg);border-left:1px solid var(--border);
+  overflow-y:auto;
+}
+.auth-form-title{font-size:1.7rem;font-weight:800;margin-bottom:0.4rem;}
+.auth-form-sub{font-size:0.88rem;color:var(--text2);margin-bottom:2rem;}
+.auth-form-sub a{color:var(--accent2);cursor:pointer;text-decoration:none;}
+.auth-form-sub a:hover{text-decoration:underline;}
+
+.form-group{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;}
+.form-group label{font-size:0.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;}
+.form-group input,.form-group select{
+  background:var(--surface);border:1px solid var(--border2);
+  color:var(--text);padding:0.75rem 1rem;border-radius:var(--r-sm);
+  font-family:'DM Sans',sans-serif;font-size:0.92rem;outline:none;
+  transition:border 0.2s,background 0.2s;
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);background:var(--bg3);}
+.form-group input::placeholder{color:var(--text3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+.form-hint{font-size:0.72rem;color:var(--text3);margin-top:0.2rem;}
+.form-error{font-size:0.78rem;color:var(--red);margin-top:0.2rem;display:none;}
+.form-group.has-error input,.form-group.has-error select{border-color:var(--red);}
+.form-group.has-error .form-error{display:block;}
+
+.auth-btn{
+  width:100%;padding:0.85rem;background:var(--accent);color:#fff;
+  border:none;border-radius:var(--r-sm);font-size:1rem;font-weight:700;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.22s;
+  margin-top:0.5rem;letter-spacing:0.2px;
+}
+.auth-btn:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 6px 24px rgba(124,111,255,0.35);}
+.auth-btn:active{transform:translateY(0);}
+.or-divider{display:flex;align-items:center;gap:0.8rem;margin:1.2rem 0;color:var(--text3);font-size:0.8rem;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* login id box */
+.login-id-box{
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--r-sm);padding:1rem 1.1rem;margin-top:0.5rem;
+  display:none;
+}
+.login-id-box .lid-label{font-size:0.72rem;color:var(--text2);margin-bottom:0.3rem;text-transform:uppercase;letter-spacing:0.5px;}
+.login-id-box .lid-value{font-size:1.1rem;font-weight:700;color:var(--accent2);font-family:'Syne',sans-serif;}
+.login-id-box .lid-note{font-size:0.75rem;color:var(--text3);margin-top:0.3rem;}
+
+/* ── DASHBOARD ── */
+.dashboard-page{flex-direction:column;}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:64px;
+  background:rgba(7,7,15,0.9);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
+}
+.topbar-left{display:flex;align-items:center;gap:2rem;}
+.topbar .brand{font-size:1.25rem;font-weight:800;}
+.topbar .brand span{color:var(--accent2);}
+.topbar-tabs{display:flex;gap:0.2rem;}
+.topbar-tab{
+  padding:0.45rem 1rem;border-radius:50px;border:none;
+  background:transparent;color:var(--text2);font-size:0.86rem;
+  font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.topbar-tab.active{background:rgba(124,111,255,0.15);color:var(--accent2);}
+.topbar-tab:hover:not(.active){color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:1rem;}
+.user-chip{
+  display:flex;align-items:center;gap:0.6rem;
+  background:var(--surface);border:1px solid var(--border);
+  padding:0.4rem 0.9rem 0.4rem 0.5rem;border-radius:50px;cursor:pointer;
+}
+.user-avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:700;color:#fff;font-family:'Syne',sans-serif;
+}
+.user-chip span{font-size:0.83rem;font-weight:500;}
+.logout-btn{
+  background:none;border:1px solid var(--border);color:var(--text2);
+  padding:0.4rem 0.9rem;border-radius:50px;font-size:0.82rem;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* dashboard inner */
+.dash-inner{flex:1;padding:2.5rem;max-width:1100px;width:100%;margin:0 auto;}
+.dash-section{display:none;}
+.dash-section.active{display:block;}
+
+/* welcome bar */
+.welcome-bar{
+  background:linear-gradient(135deg,rgba(124,111,255,0.1),rgba(52,211,153,0.05));
+  border:1px solid rgba(124,111,255,0.2);border-radius:var(--r);
+  padding:1.8rem 2rem;margin-bottom:2rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.welcome-bar h2{font-size:1.4rem;font-weight:800;margin-bottom:0.2rem;}
+.welcome-bar p{font-size:0.88rem;color:var(--text2);}
+.start-practice-btn{
+  background:var(--accent);color:#fff;border:none;
+  padding:0.75rem 1.8rem;border-radius:50px;font-size:0.9rem;
+  font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all 0.2s;white-space:nowrap;
+}
+.start-practice-btn:hover{background:var(--accent2);transform:translateY(-1px);}
+
+/* stats row */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.2rem 1.4rem;
+}
+.stat-card .sc-label{font-size:0.72rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem;}
+.stat-card .sc-value{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;}
+.stat-card .sc-sub{font-size:0.75rem;color:var(--text3);margin-top:0.2rem;}
+.sc-purple{color:var(--accent2);}
+.sc-green{color:var(--green);}
+.sc-gold{color:var(--gold);}
+.sc-red{color:var(--red);}
+
+/* section titles */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.sec-header h3{font-size:1.05rem;font-weight:700;}
+.sec-header a{font-size:0.8rem;color:var(--accent2);cursor:pointer;text-decoration:none;}
+.sec-header a:hover{text-decoration:underline;}
+
+/* history list */
+.history-list{display:flex;flex-direction:column;gap:0.8rem;}
+.history-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.2rem 1.4rem;
+  display:flex;align-items:center;gap:1.2rem;
+  transition:all 0.25s;cursor:pointer;
+}
+.history-item:hover{border-color:var(--border2);transform:translateX(4px);}
+.hi-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0;
+}
+.hi-icon-it{background:rgba(124,111,255,0.15);}
+.hi-icon-nit{background:rgba(52,211,153,0.1);}
+.hi-info{flex:1;min-width:0;}
+.hi-info h4{font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hi-info p{font-size:0.78rem;color:var(--text2);}
+.hi-right{text-align:right;flex-shrink:0;}
+.hi-score{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;}
+.hi-date{font-size:0.73rem;color:var(--text3);margin-top:0.2rem;}
+.diff-badge{
+  display:inline-block;font-size:0.68rem;font-weight:700;
+  padding:0.18rem 0.55rem;border-radius:4px;margin-left:0.5rem;
+}
+.diff-b{background:rgba(52,211,153,0.1);color:var(--green);}
+.diff-m{background:rgba(251,191,36,0.1);color:var(--gold);}
+.diff-h{background:rgba(248,113,113,0.1);color:var(--red);}
+
+.empty-state{
+  text-align:center;padding:3rem 1rem;
+  border:1px dashed var(--border);border-radius:var(--r);
+}
+.empty-state .es-icon{font-size:2.5rem;margin-bottom:0.8rem;}
+.empty-state h4{font-size:1rem;font-weight:700;margin-bottom:0.4rem;}
+.empty-state p{font-size:0.85rem;color:var(--text2);}
+
+/* profile section */
+.profile-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:2rem;max-width:600px;
+}
+.profile-avatar-row{display:flex;align-items:center;gap:1.2rem;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.profile-avatar{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;font-weight:800;color:#fff;font-family:'Syne',sans-serif;
+}
+.profile-avatar-info h3{font-size:1.2rem;font-weight:800;}
+.profile-avatar-info p{font-size:0.83rem;color:var(--text2);margin-top:0.2rem;}
+.profile-fields{display:flex;flex-direction:column;gap:1rem;}
+.profile-field{display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border);}
+.profile-field:last-child{border-bottom:none;}
+.pf-label{font-size:0.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;}
+.pf-value{font-size:0.9rem;font-weight:500;}
+.login-id-highlight{
+  background:rgba(124,111,255,0.1);border:1px solid rgba(124,111,255,0.25);
+  padding:0.3rem 0.8rem;border-radius:6px;font-family:'Syne',sans-serif;
+  color:var(--accent2);font-weight:700;
+}
+
+/* new interview modal */
+.modal-bg{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:var(--r);width:100%;max-width:520px;
+  transform:translateY(16px);transition:transform 0.25s;
+  overflow:hidden;
+}
+.modal-bg.open .modal-box{transform:translateY(0);}
+.modal-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);
+}
+.modal-hdr h3{font-size:1.05rem;font-weight:700;}
+.modal-close-btn{background:none;border:none;color:var(--text2);font-size:1.2rem;cursor:pointer;transition:color 0.2s;}
+.modal-close-btn:hover{color:var(--text);}
+.modal-body{padding:1.5rem;}
+.modal-go-btn{
+  width:100%;padding:0.85rem;background:var(--accent);color:#fff;
+  border:none;border-radius:var(--r-sm);font-size:1rem;font-weight:700;
+  cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;margin-top:0.5rem;
+}
+.modal-go-btn:hover{background:var(--accent2);}
+
+/* interview session */
+.session-page{flex-direction:column;}
+.session-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;height:60px;background:var(--bg2);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;
+}
+.session-info{display:flex;align-items:center;gap:1rem;}
+.session-info h4{font-size:0.95rem;font-weight:700;}
+.session-info p{font-size:0.78rem;color:var(--text2);}
+.back-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:0.4rem 0.9rem;border-radius:50px;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.back-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+.end-btn{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:var(--red);padding:0.4rem 0.9rem;border-radius:50px;font-size:0.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.end-btn:hover{background:rgba(248,113,113,0.2);}
+.session-body{flex:1;display:flex;flex-direction:column;max-width:760px;width:100%;margin:0 auto;padding:2rem;}
+.chat-area{flex:1;display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem;min-height:300px;}
+.chat-msg{display:flex;gap:0.7rem;}
+.chat-msg.user{flex-direction:row-reverse;}
+.msg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:700;flex-shrink:0;}
+.msg-av.ai{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.msg-av.usr{background:var(--surface2);color:var(--text2);}
+.msg-bubble{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.85rem 1rem;font-size:0.88rem;line-height:1.65;max-width:78%;}
+.chat-msg.user .msg-bubble{background:rgba(124,111,255,0.1);border-color:rgba(124,111,255,0.2);}
+.score-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.6rem;}
+.s-chip{font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:4px;font-weight:600;}
+.s-good{background:rgba(52,211,153,0.1);color:var(--green);}
+.s-warn{background:rgba(251,191,36,0.1);color:var(--gold);}
+.s-bad{background:rgba(248,113,113,0.1);color:var(--red);}
+.chat-input-row{display:flex;gap:0.6rem;}
+.chat-input-row input{
+  flex:1;background:var(--surface);border:1px solid var(--border2);
+  color:var(--text);padding:0.75rem 1rem;border-radius:var(--r-sm);
+  font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border 0.2s;
+}
+.chat-input-row input:focus{border-color:var(--accent);}
+.chat-input-row input::placeholder{color:var(--text3);}
+.chat-send-btn{background:var(--accent);color:#fff;border:none;padding:0.75rem 1.4rem;border-radius:var(--r-sm);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.chat-send-btn:hover{background:var(--accent2);}
+.chat-send-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.q-counter{text-align:center;font-size:0.78rem;color:var(--text3);margin-bottom:1rem;}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:1.5rem;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.4s;}
+
+/* typing */
+.typing{display:flex;gap:4px;align-items:center;padding:0.15rem 0;}
+.typing span{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:typ 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes typ{0%,60%,100%{transform:translateY(0);opacity:0.4;}30%{transform:translateY(-5px);opacity:1;}}
+
+/* result modal */
+.result-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);width:100%;max-width:480px;transform:translateY(16px);transition:transform 0.25s;overflow:hidden;}
+.modal-bg.open .result-box{transform:translateY(0);}
+.result-header{text-align:center;padding:2rem 2rem 1rem;}
+.result-score{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;line-height:1;}
+.result-label{font-size:0.88rem;color:var(--text2);margin-top:0.3rem;}
+.result-bars{padding:0 2rem 1.5rem;}
+.rbar-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.7rem;}
+.rbar-label{font-size:0.78rem;color:var(--text2);width:90px;flex-shrink:0;}
+.rbar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.rbar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.6s;}
+.rbar-val{font-size:0.78rem;font-weight:600;width:32px;text-align:right;}
+.result-footer{display:flex;gap:0.8rem;padding:0 2rem 2rem;}
+.result-btn{flex:1;padding:0.75rem;border-radius:var(--r-sm);font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.rb-outline{background:transparent;border:1px solid var(--border2);color:var(--text2);}
+.rb-outline:hover{border-color:var(--accent2);color:var(--accent2);}
+.rb-fill{background:var(--accent);border:none;color:#fff;}
+.rb-fill:hover{background:var(--accent2);}
+
+@media(max-width:768px){
+  .auth-left{display:none;}
+  .auth-right{width:100%;padding:2rem 1.5rem;}
+  .topbar-tabs{display:none;}
+  .dash-inner{padding:1.5rem 1rem;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+<style>
+/* Light theme overrides */
+[data-theme="light"] {
+  --bg: #f7f8fa;
+  --bg2: #ffffff;
+  --bg3: #f2f4f8;
+  --surface: #ffffff;
+  --surface2: #f6f7fb;
+  --border: rgba(15,15,20,0.06);
+  --border2: rgba(15,15,20,0.09);
+  --accent: #4f46e5;
+  --accent2: #7c6fff;
+  --accent3: #10b981;
+  --text: #0b1220;
+  --text2: #475569;
+  --text3: #7b8794;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE 1 — REGISTER
+═══════════════════════════════════════════ -->
+<div class="page active auth-page" id="registerPage">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="brand">Interview<span>AI</span></div>
+    <div class="auth-tagline">
+      <h2>Practice Smarter.<br><em>Land Your Dream Role.</em></h2>
+      <p>AI-powered mock interviews for every role — IT & non-IT — with real-time feedback and detailed scoring.</p>
+      <div class="auth-perks">
+        <div class="perk"><div class="perk-icon pi-p">🤖</div><p><strong>Domain-specific AI</strong> tailored to your exact role</p></div>
+        <div class="perk"><div class="perk-icon pi-g">📊</div><p><strong>Instant scoring</strong> on every answer you give</p></div>
+        <div class="perk"><div class="perk-icon pi-y">🎯</div><p><strong>50+ roles</strong> across IT and non-IT industries</p></div>
+        <div class="perk"><div class="perk-icon pi-r">📈</div><p><strong>Interview history</strong> to track your improvement</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <h2 class="auth-form-title">Create Account</h2>
+    <p class="auth-form-sub">Already have an account? <a onclick="showLogin()">Sign in →</a></p>
+
+    <div class="form-row">
+      <div class="form-group" id="fg-fname">
+        <label>First Name</label>
+        <input type="text" id="reg-fname" placeholder="Divakar" />
+        <span class="form-error">Required</span>
+      </div>
+      <div class="form-group" id="fg-lname">
+        <label>Last Name</label>
+        <input type="text" id="reg-lname" placeholder="Bethapudi" />
+        <span class="form-error">Required</span>
+      </div>
+    </div>
+
+    <div class="form-group" id="fg-email">
+      <label>Email Address</label>
+      <input type="email" id="reg-email" placeholder="divakarbethapudi@example.com" />
+      <span class="form-error">Enter a valid email</span>
+    </div>
+
+    <div class="form-group" id="fg-phone">
+      <label>Phone Number</label>
+      <input type="tel" id="reg-phone" placeholder="+91 9703612824" />
+      <span class="form-error">Enter a valid 10-digit number</span>
+    </div>
+
+    <div class="form-group" id="fg-college">
+      <label>College / Institution Name</label>
+      <input type="text" id="reg-college" placeholder="Bapatla Engineering College / Bapatla / etc." />
+      <span class="form-error">Required</span>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" id="fg-degree">
+        <label>Degree / Course</label>
+        <input type="text" id="reg-degree" placeholder="B.Tech IT" />
+        <span class="form-error">Required</span>
+      </div>
+      <div class="form-group" id="fg-year">
+        <label>Year of Study</label>
+        <select id="reg-year">
+          <option value="">Select year</option>
+          <option>1st Year</option><option>2nd Year</option>
+          <option>3rd Year</option><option>4th Year</option>
+          <option>Graduated</option><option>Working Professional</option>
+        </select>
+        <span class="form-error">Required</span>
+      </div>
+    </div>
+
+    <div class="form-group" id="fg-pass">
+      <label>Password</label>
+      <input type="password" id="reg-pass" placeholder="Min. 6 characters" />
+      <span class="form-error">Min. 6 characters required</span>
+    </div>
+
+    <button class="auth-btn" onclick="registerUser()">Create My Account →</button>
+
+    <div class="login-id-box" id="loginIdBox">
+      <div class="lid-label">🎉 Your Login ID (save this!)</div>
+      <div class="lid-value" id="loginIdDisplay"></div>
+      <div class="lid-note">Use this ID to log in next time. Redirecting to dashboard…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 2 — LOGIN
+═══════════════════════════════════════════ -->
+<div class="page auth-page" id="loginPage">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="brand">Interview<span>AI</span></div>
+    <div class="auth-tagline">
+      <h2>Welcome Back.<br><em>Keep Practising.</em></h2>
+      <p>Your interview history, scores, and progress are waiting for you. Let's get you back in the zone.</p>
+      <div class="auth-perks">
+        <div class="perk"><div class="perk-icon pi-p">📋</div><p>View all your <strong>past interview sessions</strong></p></div>
+        <div class="perk"><div class="perk-icon pi-g">🔁</div><p>Start a <strong>new practice round</strong> anytime</p></div>
+        <div class="perk"><div class="perk-icon pi-y">📈</div><p>Track your <strong>score improvement</strong> over time</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <h2 class="auth-form-title">Sign In</h2>
+    <p class="auth-form-sub">New here? <a onclick="showRegister()">Create an account →</a></p>
+
+    <div class="form-group" id="fg-lid">
+      <label>Login ID</label>
+      <input type="text" id="login-id" placeholder="e.g. RAVI-2847" />
+      <div class="form-hint">Your unique Login ID was shown after registration.</div>
+      <span class="form-error">Invalid Login ID</span>
+    </div>
+
+    <div class="form-group" id="fg-lpass">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')loginUser()" />
+      <span class="form-error">Wrong password</span>
+    </div>
+
+    <button class="auth-btn" onclick="loginUser()">Sign In →</button>
+    <p class="auth-form-sub" style="margin-top:1rem;">Need admin access? <a onclick="showAdminLogin()">Admin login →</a></p>
+  </div>
+</div>
+
+<div class="page auth-page" id="adminLoginPage">
+  <div class="auth-left">
+    <div class="auth-left-bg"></div>
+    <div class="brand">Interview<span>AI</span> Admin</div>
+    <div class="auth-tagline">
+      <h2>Admin Access.<br><em>Review users.</em></h2>
+      <p>Secure admin login for reviewing registered user records stored in local storage.</p>
+      <div class="auth-perks">
+        <div class="perk"><div class="perk-icon pi-p">🔐</div><p>View all registered users</p></div>
+        <div class="perk"><div class="perk-icon pi-g">📋</div><p>See phone, name, college, email, and stored password</p></div>
+        <div class="perk"><div class="perk-icon pi-y">⚙️</div><p>Monitor registrations in one place</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <h2 class="auth-form-title">Admin Sign In</h2>
+    <p class="auth-form-sub">Back to user login? <a onclick="showLogin()">User sign in →</a></p>
+
+    <div class="form-group" id="fg-admin-username">
+      <label>Username</label>
+      <input type="text" id="admin-username" placeholder="Enter admin username" />
+      <span class="form-error">Invalid admin username</span>
+    </div>
+
+    <div class="form-group" id="fg-admin-pass">
+      <label>Password</label>
+      <input type="password" id="admin-pass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')loginAdmin()" />
+      <span class="form-error">Wrong admin password</span>
+    </div>
+
+    <button class="auth-btn" onclick="loginAdmin()">Enter Admin Panel →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 3 — DASHBOARD
+═══════════════════════════════════════════ -->
+<div class="page dashboard-page" id="dashboardPage">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="brand">Interview<span>AI</span></div>
+      <div class="topbar-tabs">
+        <button class="topbar-tab active" onclick="switchTab('overview',this)">Overview</button>
+        <button class="topbar-tab" onclick="switchTab('history',this)">My History</button>
+        <button class="topbar-tab" onclick="switchTab('profile',this)">Profile</button>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip" onclick="switchTab('profile',null)">
+        <div class="user-avatar" id="topbarAvatar">RK</div>
+        <span id="topbarName">Ravi</span>
+      </div>
+      <button class="logout-btn" id="themeToggle" aria-pressed="false" aria-label="Toggle theme">🌙</button>
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-inner">
+    <!-- OVERVIEW -->
+    <div class="dash-section active" id="tab-overview">
+      <div class="welcome-bar">
+        <div>
+          <h2 id="welcomeMsg">Welcome back, Ravi! 👋</h2>
+          <p id="welcomeSub">Ready for your next interview practice session?</p>
+        </div>
+        <button class="start-practice-btn" onclick="openNewInterviewModal()">+ Start New Interview</button>
+      </div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card"><div class="sc-label">Total Sessions</div><div class="sc-value sc-purple" id="statTotal">0</div><div class="sc-sub">interviews practiced</div></div>
+        <div class="stat-card"><div class="sc-label">Best Score</div><div class="sc-value sc-green" id="statBest">—</div><div class="sc-sub">out of 10.0</div></div>
+        <div class="stat-card"><div class="sc-label">Average Score</div><div class="sc-value sc-gold" id="statAvg">—</div><div class="sc-sub">across all sessions</div></div>
+        <div class="stat-card"><div class="sc-label">This Week</div><div class="sc-value sc-red" id="statWeek">0</div><div class="sc-sub">sessions</div></div>
+      </div>
+
+      <div class="sec-header">
+        <h3>Recent Interviews</h3>
+        <a onclick="switchTab('history',document.querySelectorAll('.topbar-tab')[1])">View all →</a>
+      </div>
+      <div class="history-list" id="recentList"></div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="dash-section" id="tab-history">
+      <div class="sec-header">
+        <h3>All Interview Sessions</h3>
+        <a onclick="openNewInterviewModal()">+ New Interview</a>
+      </div>
+      <div class="history-list" id="fullHistoryList"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="dash-section" id="tab-profile">
+      <div class="sec-header"><h3>My Profile</h3></div>
+      <div class="profile-card">
+        <div class="profile-avatar-row">
+          <div class="profile-avatar" id="profileAvatar">RK</div>
+          <div class="profile-avatar-info">
+            <h3 id="profileName">Ravi Kumar</h3>
+            <p id="profileCollege">IIT Hyderabad</p>
+          </div>
+        </div>
+        <div class="profile-fields">
+          <div class="profile-field"><span class="pf-label">Login ID</span><span class="pf-value"><span class="login-id-highlight" id="profileLoginId">RAVI-2847</span></span></div>
+          <div class="profile-field"><span class="pf-label">Email</span><span class="pf-value" id="profileEmail">—</span></div>
+          <div class="profile-field"><span class="pf-label">Phone</span><span class="pf-value" id="profilePhone">—</span></div>
+          <div class="profile-field"><span class="pf-label">College</span><span class="pf-value" id="profileCollegeFull">—</span></div>
+          <div class="profile-field"><span class="pf-label">Degree</span><span class="pf-value" id="profileDegree">—</span></div>
+          <div class="profile-field"><span class="pf-label">Year</span><span class="pf-value" id="profileYear">—</span></div>
+          <div class="profile-field"><span class="pf-label">Joined</span><span class="pf-value" id="profileJoined">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page dashboard-page" id="adminDashboardPage">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="brand">Interview<span>AI</span> Admin</div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="user-avatar">AD</div>
+        <span>Admin</span>
+      </div>
+      <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+    </div>
+  </div>
+  <div class="dash-inner">
+    <div class="sec-header" style="justify-content:space-between;gap:1rem;">
+      <h3>Registered Users</h3>
+      <div style="color:var(--text2);font-size:0.95rem;">Total users: <strong id="adminUserCount">0</strong></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;min-width:780px;">
+        <thead>
+          <tr style="text-align:left;color:var(--text2);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.08em;">
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Login ID</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Name</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Email</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Phone</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">College</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Password</th>
+            <th style="padding:0.95rem;border-bottom:1px solid var(--border);">Joined</th>
+          </tr>
+        </thead>
+        <tbody id="adminUsersBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="adminEmpty" style="display:none;margin-top:1rem;">
+      <div class="es-icon">🧾</div>
+      <h4>No user records found</h4>
+      <p>New users will appear here once they register.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE 4 — INTERVIEW SESSION
+═══════════════════════════════════════════ -->
+<div class="page session-page" id="sessionPage">
+  <div class="session-topbar">
+    <div class="session-info">
+      <div>
+        <h4 id="sessionTitle">Backend Engineer — Intermediate</h4>
+        <p id="sessionSubtitle">Technical Round · AI Interviewer</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:0.6rem;">
+      <button class="back-btn" onclick="confirmEndSession()">← Back</button>
+      <button class="end-btn" onclick="endSession()">End & Score</button>
+    </div>
+  </div>
+  <div class="session-body">
+    <div class="q-counter" id="qCounter">Question 1 of 5</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="chat-area" id="sessionChat"></div>
+    <div class="chat-input-row">
+      <input type="text" id="sessionInput" placeholder="Type your answer…" onkeydown="if(event.key==='Enter')sendSessionMsg()" />
+      <button class="chat-send-btn" id="sessionSendBtn" onclick="sendSessionMsg()">Send →</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW INTERVIEW MODAL -->
+<div class="modal-bg" id="niModal" onclick="closeNIModal(event)">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3>🎯 New Interview Session</h3>
+      <button class="modal-close-btn" onclick="document.getElementById('niModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Category</label>
+        <select id="ni-cat" onchange="populateNiRoles()">
+          <option value="">Select category</option>
+          <option value="it">💻 IT / Tech</option>
+          <option value="nonit">🏢 Non-IT</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="ni-role"><option value="">Select role</option></select>
+      </div>
+      <div class="form-group">
+        <label>Interview Type</label>
+        <select id="ni-type">
+          <option value="technical">Technical Round</option>
+          <option value="hr">HR / Behavioral Round</option>
+          <option value="mixed">Mixed (Tech + HR)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Difficulty</label>
+        <select id="ni-diff">
+          <option value="basic">🟢 Basic</option>
+          <option value="intermediate">🟡 Intermediate</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+      </div>
+      <button class="modal-go-btn" onclick="startSession()">Start Interview →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-bg" id="resultModal">
+  <div class="result-box">
+    <div class="result-header">
+      <div class="result-score" id="resultScore">8.2</div>
+      <div class="result-label">Overall Score / 10</div>
+    </div>
+    <div class="result-bars">
+      <div class="rbar-row"><div class="rbar-label">Technical</div><div class="rbar-track"><div class="rbar-fill" id="rb-tech"></div></div><div class="rbar-val" id="rv-tech"></div></div>
+      <div class="rbar-row"><div class="rbar-label">Clarity</div><div class="rbar-track"><div class="rbar-fill" id="rb-clar"></div></div><div class="rbar-val" id="rv-clar"></div></div>
+      <div class="rbar-row"><div class="rbar-label">Depth</div><div class="rbar-track"><div class="rbar-fill" id="rb-dep"></div></div><div class="rbar-val" id="rv-dep"></div></div>
+      <div class="rbar-row"><div class="rbar-label">Confidence</div><div class="rbar-track"><div class="rbar-fill" id="rb-conf"></div></div><div class="rbar-val" id="rv-conf"></div></div>
+    </div>
+    <div class="result-footer">
+      <button class="result-btn rb-outline" onclick="goToDashboard()">Go to Dashboard</button>
+      <button class="result-btn rb-fill" onclick="openNewInterviewModal();document.getElementById('resultModal').classList.remove('open')">Practice Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── ROLES DATA ───────────────────────────────────────────
+const ROLES = {
+  it: [
+    {e:'⚙️',n:'Backend Engineer'},{e:'🎨',n:'Frontend Developer'},
+    {e:'📱',n:'Mobile Developer'},{e:'☁️',n:'DevOps / Cloud'},
+    {e:'🔐',n:'Cybersecurity Analyst'},{e:'🤖',n:'AI / ML Engineer'},
+    {e:'📊',n:'Data Scientist'},{e:'🗄️',n:'Data Engineer'},
+    {e:'🧪',n:'QA / Test Engineer'},{e:'🖥️',n:'Full Stack Developer'},
+    {e:'🏗️',n:'Solutions Architect'},{e:'🔧',n:'SRE / Infra Engineer'},
+  ],
+  nonit: [
+    {e:'📣',n:'Digital Marketing'},{e:'💰',n:'Finance & Accounting'},
+    {e:'🧑‍💼',n:'HR Manager'},{e:'📦',n:'Product Manager'},
+    {e:'🤝',n:'Business Analyst'},{e:'📈',n:'Sales Executive'},
+    {e:'🎯',n:'Operations Manager'},{e:'📝',n:'Content Writer'},
+    {e:'🏥',n:'Healthcare Admin'},{e:'⚖️',n:'Legal / Compliance'},
+    {e:'🎓',n:'Educator / Trainer'},{e:'🎨',n:'UI/UX Designer'},
+  ]
+};
+
+// ─── QUESTION BANK ────────────────────────────────────────
+// Each item includes correctAnswer + explanation + rubric keywords.
+const QUESTIONS = {
+  technical: {
+    basic:[
+      {q:"Tell me about yourself and your technical background.",
+       correctAnswer:"A strong answer (about 90–120 seconds) usually covers: (1) present role/what you do, (2) 1–2 key projects/achievements with impact, (3) relevant technical skills, and (4) what you’re looking for next in this role.",
+       explanation:"Interviewers want a clear summary that connects your experience to the target role. Structure it so they can quickly understand your strengths and motivation.",
+       rubric:["Mentions present/role","Covers relevant projects with impact","Connects skills to target role","Concise","Closes with motivation"],
+       keywords:["present","project","impact","skills","motivation","role"]},
+      {q:"What is the difference between an array and a linked list?",
+       correctAnswer:"Array: contiguous memory, fast O(1) random access. Insert/delete can be costly (often O(n)) due to shifting. Linked list: non-contiguous memory, O(n) traversal to reach a position; insert/delete at a node is O(1) after you have the node.",
+       explanation:"Arrays optimize for random access; linked lists optimize for insertion/deletion once you’re at the node.",
+       rubric:["Mentions memory layout","Mentions access vs traversal complexity","Mentions insert/delete tradeoff","States when to use each"],
+       keywords:["contiguous","O(1)","traverse","pointers","insert","delete","O(n)"]},
+      {q:"Explain what REST API means in simple terms.",
+       correctAnswer:"REST is an approach to designing web APIs where data/resources are identified by URLs and operations are performed using standard HTTP methods. REST is stateless: each request contains all the information the server needs.",
+       explanation:"Mention resources (nouns), HTTP verbs, and statelessness; optionally reference common payload format like JSON.",
+       rubric:["Defines REST","Correct HTTP method concept","Mentions resources/URLs","Mentions statelessness"],
+       keywords:["resources","URL","HTTP","GET","POST","stateless"]},
+      {q:"What is a database index and why is it used?",
+       correctAnswer:"An index is a data structure that speeds up lookups by allowing the database to avoid full table scans. Tradeoff: indexes make reads faster but can slow down writes (INSERT/UPDATE/DELETE) because the index must be maintained.",
+       explanation:"Explain indexing as a performance optimization for queries on indexed columns, plus the write-performance tradeoff.",
+       rubric:["Explains purpose (faster reads)","Mentions avoided full scan","Mentions write tradeoff","Gives an example structure (e.g., B-tree) (optional)"],
+       keywords:["index","scan","faster","lookup","B-tree","tradeoff","writes"]},
+      {q:"What is the difference between GET and POST requests?",
+       correctAnswer:"GET is used to retrieve data and should be free of side effects (no server state change). POST is used to submit data for processing and can create/update server state.",
+       explanation:"Key points: idempotency/side effects, what each is typically used for.",
+       rubric:["GET = retrieve","POST = submit/process","Mentions side effects/idempotency (optional but good)","Mentions common usage"],
+       keywords:["GET","POST","retrieve","submit","side-effect","idempotent"]},
+    ],
+    intermediate:[
+      {q:"Explain the CAP theorem and how it applies to distributed systems.",
+       correctAnswer:"CAP: in the presence of a network partition, a distributed system can provide at most two of three guarantees: Consistency, Availability, and Partition tolerance. If partitions happen, you choose between being consistent or available.",
+       explanation:"Restate the three properties and the tradeoff during partitions. Mention that partition tolerance is typically assumed.",
+       rubric:["Defines C/A/P","Explains partition scenario","States 'only two' tradeoff","Mentions system design implication"],
+       keywords:["CAP","consistency","availability","partition","tradeoff"]},
+      {q:"How does database connection pooling work and why is it important?",
+       correctAnswer:"Connection pooling keeps a set of reusable database connections. When a request needs DB access, it borrows an existing connection instead of creating a new one. This reduces connection setup overhead and limits the number of concurrent connections.",
+       explanation:"Call out performance (avoid repeated connect) and stability (cap connections).", 
+       rubric:["Defines pooling","Explains why (performance)","Explains why (limits connections)","Mentions borrow/return lifecycle"],
+       keywords:["pool","borrow","return","connections","overhead","concurrency"]},
+      {q:"Walk me through the differences between REST and GraphQL. When would you choose one over the other?",
+       correctAnswer:"REST exposes multiple endpoints and often requires multiple requests; clients receive fixed resource representations per endpoint. GraphQL uses a single endpoint where clients specify exactly which fields they need, avoiding over/under-fetching. Choose GraphQL when you need flexible client-driven queries; choose REST when the API is simple and caching/tooling is a priority.",
+       explanation:"Compare data fetching patterns (over/under-fetching) and endpoint style.",
+       rubric:["Mentions endpoint style","Mentions client-driven field selection","Mentions over/under-fetching","Gives decision guidance"],
+       keywords:["REST","GraphQL","fields","endpoint","under-fetch","over-fetch","single endpoint"]},
+      {q:"What are the key differences between SQL and NoSQL databases? Give a real-world use case for each.",
+       correctAnswer:"SQL databases are relational, use tables/schemas, support joins, and are good for structured data with complex queries. NoSQL databases are non-relational and provide flexible schemas and horizontal scaling; examples: document stores for content, key-value for caching, wide-column for time-series/log analytics.",
+       explanation:"Cover schema rigidity vs flexibility, and give at least one example use case for each.",
+       rubric:["SQL = relational/schema/joins","NoSQL = flexible schema/scaling","Provides use case for SQL","Provides use case for NoSQL"],
+       keywords:["SQL","relational","schema","joins","NoSQL","document","key-value","scaling"]},
+      {q:"Explain how you would design a URL shortening service like bit.ly.",
+       correctAnswer:"High-level design: create an API to accept long URLs; generate a short code (e.g., hash + random). Store mappings (code→URL) in a DB/cache. On redirect, look up the code, handle cache hits, and return HTTP 301/302. Add analytics (click counts), rate limiting, input validation, and background jobs for cleanup/expirations.",
+       explanation:"This is about components + flow: generate, store, redirect, and operational concerns.",
+       rubric:["Describes request flow (create + redirect)","Mentions code generation strategy","Mentions storage + caching","Mentions redirects/HTTP codes","Mentions scaling/analytics/rate limit"],
+       keywords:["short code","hash","cache","redirect","301","analytics","rate limit"]},
+    ],
+    hard:[
+      {q:"Design a rate-limiting system that handles 10 million requests per day across multiple servers.",
+       correctAnswer:"Use a central or distributed rate limiter. Common approach: token bucket/leaky bucket with counters stored in Redis (atomic INCR/LUA scripts) so all servers share limits. Partition limits by key (user/IP/API route). Use TTL to expire counters, add local fallback for Redis outages, and monitor/alert. Scale horizontally by sharding keys or using multiple Redis instances.",
+       explanation:"Key: algorithm + shared state + atomicity + partitioning + TTL + observability.",
+       rubric:["Chooses bucket algorithm","Uses shared atomic store (Redis)","Partitioning by key","TTL/expiration","Operational/scaling/monitoring"],
+       keywords:["token bucket","Redis","atomic","INCR","TTL","shard","rate limit"]},
+      {q:"How would you approach migrating a monolithic application to microservices without downtime?",
+       correctAnswer:"Incremental strangler fig pattern: identify boundaries and extract services one by one. Use API gateway to route traffic, dual-write or strangler endpoints during transition, and contract/versioning management. Ensure backward compatibility, deploy gradually, and use feature flags/rollbacks. Move data carefully (shared DB → per-service DB via migrations) to avoid downtime.",
+       explanation:"Emphasize incremental extraction, routing, compatibility, and safe deployment.",
+       rubric:["Uses incremental extraction (strangler)","Mentions gateway/routing","Mentions versioning/compatibility","Mentions data migration strategy","Mentions safety (flags/rollback)"],
+       keywords:["strangler","gateway","version","compatibility","dual write","feature flag","rollback","data migration"]},
+      {q:"Explain eventual consistency and give a scenario where it's acceptable vs. not acceptable.",
+       correctAnswer:"Eventual consistency means that after updates stop, replicas will converge to the same state, but intermediate reads may be stale. Acceptable: social feeds, profile views, caches where slight delay is fine. Not acceptable: financial transactions, inventory counts where accuracy is critical.",
+       explanation:"Define it and give clear acceptable vs unacceptable examples.",
+       rubric:["Defines eventual consistency","States staleness concept","Gives acceptable scenario","Gives non-acceptable scenario","Links to correctness impact"],
+       keywords:["eventual","converge","stale reads","finance","inventory","cache","feed"]},
+      {q:"Walk me through how you'd design a real-time chat system that scales to 1 million concurrent users.",
+       correctAnswer:"Use WebSockets for persistent connections. Messages go through an ingress layer (load balancer), then to a pub/sub or message broker (e.g., Kafka/NATS/RabbitMQ) for fanout. Partition by chat room/user for horizontal scaling. Use presence servers, stateless message workers, and durable storage (DB) for history. Handle delivery guarantees (at-least-once), backpressure, and offline delivery via queues.",
+       explanation:"Focus on connection handling, pub/sub, partitioning, durability, and scaling.",
+       rubric:["Mentions WebSockets/persistent connections","Mentions message broker/pub-sub","Mentions partitioning/sharding","Mentions durability/history","Mentions guarantees/offline/backpressure"],
+       keywords:["WebSocket","pub/sub","broker","partition","Kafka","durable","at-least-once","backpressure"]},
+      {q:"How do you handle distributed transactions in a microservices architecture?",
+       correctAnswer:"Prefer avoiding distributed transactions via data ownership and designing around consistency (e.g., SAGA pattern). Use orchestration or choreography with compensating actions. For cases needing stronger consistency, consider 2PC/3PC (with tradeoffs) or use patterns like outbox/inbox for reliable eventing.",
+       explanation:"Present the mainstream approach: Sagas + compensation + reliable messaging.",
+       rubric:["Avoids vs handles transactions","Uses Saga/compensation","Mentions orchestration/choreography","Mentions reliable messaging (outbox/inbox) or tradeoffs","Shows understanding of consistency"],
+       keywords:["Saga","compensating","orchestration","choreography","outbox","inbox","2PC","consistency"]},
+    ],
+  },
+  hr:[
+    {q:"Tell me about yourself and your journey so far.",
+     correctAnswer:"A strong answer summarizes your professional background, key milestones, relevant skills, and what you’re seeking next. Keep it role-relevant and structured (present → past highlights → why now).",
+     explanation:"Focus on a concise story that links past experience to the role you’re interviewing for.",
+     rubric:["Professional summary","Highlights relevant milestones","Connects to target role","Concise and structured","Motivation for next step"],
+     keywords:["background","milestone","skills","motivation","journey"]},
+    {q:"Why do you want to work in this role?",
+     correctAnswer:"Explain alignment: the role’s responsibilities match your experience/strengths. Mention company/team/product fit and your motivation to contribute/learn. Avoid generic answers.",
+     explanation:"Make the connection between role requirements and your background explicit.",
+     rubric:["Role alignment","Company/team fit","Clear motivation","Specifics/examples"],
+     keywords:["alignment","responsibilities","fit","motivation","team"]},
+    {q:"Describe a challenging situation you faced and how you resolved it.",
+     correctAnswer:"Use STAR: Situation, Task, Action, Result. Choose a challenge that shows ownership and problem-solving. Include measurable outcomes when possible.",
+     explanation:"Interviewers look for structured problem-solving and learning.",
+     rubric:["Uses STAR","Shows ownership","Clear actions","Measurable results","Learning/follow-up"],
+     keywords:["challenge","STAR","ownership","result","learning"]},
+    {q:"Where do you see yourself in 5 years?",
+     correctAnswer:"A realistic trajectory aligned with growth in the role/field. Mention increasing scope, impact, leadership/mentoring, and continued skill development.",
+     explanation:"Keep it believable and connected to the position.",
+     rubric:["Realistic plan","Role/skill growth","Increasing impact","Mentions leadership/mentoring (optional)"],
+     keywords:["5 years","growth","impact","leadership","skills"]},
+    {q:"What is your greatest strength and weakness?",
+     correctAnswer:"Strength: relevant to the role and backed by example. Weakness: something you’re actively improving with a concrete plan.",
+     explanation:"Avoid clichés; show self-awareness and improvement.",
+     rubric:["Strength role-relevant with example","Weakness is genuine but not disqualifying","Shows mitigation plan","Growth mindset"],
+     keywords:["strength","weakness","improve","example","mindset"]},
+    {q:"How do you handle feedback from managers or peers?",
+     correctAnswer:"Describe receiving feedback openly, verifying its intent, taking action, and following up with the giver. Show that feedback helps you improve and you take responsibility for changes.",
+     explanation:"Good answers demonstrate growth mindset and collaboration.",
+     rubric:["Welcomes feedback","Checks intent","Acts and follows up","Shows improvement"],
+     keywords:["feedback","openly","improve","responsibility","follow up"]},
+    {q:"Tell me about a time you had to learn something new quickly.",
+     correctAnswer:"Explain the context, what you needed to learn, how you researched or trained, and the result. Include how you applied the new knowledge successfully.",
+     explanation:"Interviewers want to see adaptability and fast learning.",
+     rubric:["Explains context","Describes learning method","Shows result","Applies new knowledge"],
+     keywords:["learn","quickly","research","training","result"]},
+    {q:"How do you prioritize tasks when everything seems important?",
+     correctAnswer:"Talk about evaluating impact, deadlines, dependencies, and stakeholder needs. Mention using a framework like urgency/importance or a roadmap, and communicating changes clearly.",
+     explanation:"Shows structured prioritization and communication.",
+     rubric:["Evaluates impact","Uses a framework","Considers stakeholders","Communicates clearly"],
+     keywords:["prioritize","impact","deadline","stakeholder","roadmap"]},
+    {q:"Describe a time when your team missed a deadline. What did you do?",
+     correctAnswer:"Share the situation, why the delay happened, how you helped resolve it, and what corrective actions were taken. Mention lessons learned and process improvements to prevent recurrence.",
+     explanation:"This evaluates accountability and improvement.",
+     rubric:["Owns situation","Explains cause","Resolves problem","Shares learning"],
+     keywords:["deadline","delay","resolve","improve","lesson"]},
+    {q:"How do you manage stress under pressure?",
+     correctAnswer:"Mention planning, breaking work into smaller steps, staying calm, asking for help when needed, and keeping priorities aligned. Include an example of how this worked in a real situation.",
+     explanation:"Shows resilience and self-management.",
+     rubric:["Stays calm","Plans work","Seeks support","Uses example"],
+     keywords:["stress","pressure","planning","calm","support"]},
+    {q:"What motivates you to do your best work?",
+     correctAnswer:"Talk about meaningful impact, personal growth, collaboration, or solving challenging problems. Tie it to how the role and company environment support that motivation.",
+     explanation:"Good answers are specific and connected to the opportunity.",
+     rubric:["States motivation","Connects to role","Mentions growth/impact","Shows authenticity"],
+     keywords:["motivate","impact","growth","collaboration","challenge"]},
+    {q:"How do you ensure good communication within a team?",
+     correctAnswer:"Describe regular check-ins, clear agendas, shared documentation, and open feedback. Mention how you adapt communication style for stakeholders and keep people aligned.",
+     explanation:"Highlights collaboration and clarity.",
+     rubric:["Regular check-ins","Shared docs","Open feedback","Stakeholder adaptation"],
+     keywords:["communication","check-in","documentation","feedback","alignment"]},
+    {q:"Tell me about a time you resolved a conflict in a team.",
+     correctAnswer:"Explain the disagreement, how you listened to both sides, found common ground, and helped the team move forward. Mention the outcome and what you learned.",
+     explanation:"Shows emotional intelligence and teamwork.",
+     rubric:["Listens","Finds common ground","Resolves","Shares outcome"],
+     keywords:["conflict","listen","common ground","resolve","outcome"]},
+    {q:"How do you adapt to changing priorities or requirements?",
+     correctAnswer:"Talk about staying flexible, reassessing goals, communicating changes, and updating plans quickly. Include an example of a successful pivot.",
+     explanation:"Demonstrates agility and communication.",
+     rubric:["Stays flexible","Reassesses","Communicates","Examples"],
+     keywords:["adapt","change","priorities","pivot","communicate"]},
+    {q:"What makes a team successful?",
+     correctAnswer:"A successful team has trust, clear goals, good communication, shared ownership, and consistent execution. Mention collaboration, feedback, and continuous improvement.",
+     explanation:"Focus on team dynamics and outcomes.",
+     rubric:["Trust","Goals","Communication","Ownership","Improvement"],
+     keywords:["team","trust","goals","communication","ownership"]},
+  ],
+  mixed:{
+    basic:[
+      {q:"Tell me about yourself.",
+       correctAnswer:"A concise story: present role/what you do, 1–2 key projects/achievements, core skills, and why you’re interested right now.",
+       explanation:"Tell a clear, structured professional story.",
+       rubric:["Concise","Relevant projects","Core skills","Motivation"],
+       keywords:["present","projects","skills","motivation"]},
+      {q:"What do you know about this role?",
+       correctAnswer:"You understand the role’s core responsibilities, what success looks like, key technologies/domain (for tech roles), and the team/product context.",
+       explanation:"Show that you researched and understand impact/expectations.",
+       rubric:["Mentions responsibilities","Mentions success metrics/impact","Shows research","Relevant technical/domain points (if applicable)"],
+       keywords:["responsibilities","impact","metrics","research","team"]},
+      {q:"What are your technical skills?",
+       correctAnswer:"List skills relevant to the role: languages/frameworks, architecture/design, databases, testing, and collaboration. Prefer breadth + 1–2 deep strengths.",
+       explanation:"Connect skills to how you deliver outcomes.",
+       rubric:["Role-relevant skills","Mentions depth (examples)","Covers core areas (code/design/db/test)","Shows impact"],
+       keywords:["skills","framework","database","testing","design","impact"]},
+      {q:"Why are you interested in this field?",
+       correctAnswer:"Your interest is tied to a problem you enjoy, a learning/curiosity drive, and how the field matches your strengths and values. Include a brief personal or project example.",
+       explanation:"Avoid generic passion—make it specific and grounded.",
+       rubric:["Specific motivation","Grounded example","Values/fit","Clear reasoning"],
+       keywords:["interest","problem","learning","values","example"]},
+      {q:"Describe a project you've worked on.",
+       correctAnswer:"Use STAR/STAR-Lite: goal/problem, your responsibilities, key approach/tech choices, tradeoffs, and result. Include what you learned.",
+       explanation:"Interviewers want ownership and decision-making, not just description.",
+       rubric:["States problem/goal","Shows your contribution","Explains key decisions/tradeoffs","Result/impact","Learning"],
+       keywords:["project","responsibility","tradeoff","result","learned"]},
+    ],
+    intermediate:[
+      {q:"Walk me through your most impactful project.",
+       correctAnswer:"Choose a project with measurable impact. Explain context, your role, approach, constraints/tradeoffs, and the results (metrics/qualitative outcomes).",
+       explanation:"Emphasize impact and decision-making.",
+       rubric:["Impact with evidence","Clear role","Approach & tradeoffs","Constraints","Result"],
+       keywords:["impact","metrics","role","tradeoffs","result"]},
+      {q:"How do you handle tight deadlines?",
+       correctAnswer:"Plan and prioritize: break work into milestones, estimate risks early, communicate tradeoffs, and focus on critical path. Adjust scope with stakeholders and ensure quality via testing/review.",
+       explanation:"Show structured execution and communication.",
+       rubric:["Planning/prioritization","Risk management","Communication","Scope adjustment","Quality safeguards"],
+       keywords:["deadline","prioritize","milestones","risk","communicate","quality"]},
+      {q:"Tell me about a technical decision you made that you regret.",
+       correctAnswer:"Describe the context and why you chose it, then explain what went wrong (learning) and what you do differently now. Keep blame low; focus on improvement.",
+       explanation:"Interviewers assess maturity and learning.",
+       rubric:["Explains context/decision","Acknowledges impact","Explains learning","Improvement plan"],
+       keywords:["decision","regret","learning","improve","context"]},
+      {q:"How do you stay updated with industry trends?",
+       correctAnswer:"Use a repeatable routine: reading (papers/blogs), attending talks, experimenting with side projects, and summarizing what you learned. Mention how you apply it at work.",
+       explanation:"Show continuous learning and practical application.",
+       rubric:["Mentions concrete sources","Mentions experimentation/practice","Mentions application to work","Consistency"],
+       keywords:["learn","papers","talks","experiments","apply"]},
+      {q:"Describe a time you disagreed with a team member — how was it resolved?",
+       correctAnswer:"Use respectful communication: discuss assumptions, share evidence, propose options, and align on a decision. Mention how you ensured collaboration and avoided recurrence.",
+       explanation:"Show conflict resolution and teamwork.",
+       rubric:["Respectful communication","Evidence/assumptions","Proposed options","Aligned decision","Team outcome"],
+       keywords:["disagree","evidence","assumptions","options","alignment"]},
+    ],
+    hard:[
+      {q:"Tell me about a time you led a complex technical initiative from start to finish.",
+       correctAnswer:"Describe initiative scope, stakeholders, plan/milestones, your leadership actions, technical architecture choices, risks, and final outcome/metrics. Mention how you coordinated delivery.",
+       explanation:"Focus on leadership + end-to-end delivery.",
+       rubric:["End-to-end ownership","Leadership actions","Technical decisions","Risk management","Outcome"],
+       keywords:["led","initiative","architecture","milestones","risk","outcome"]},
+      {q:"How would you approach building a team from scratch for a new product?",
+       correctAnswer:"Define roles based on product needs, hire for complementary skills, set clear goals/KPIs, create onboarding/processes, and establish communication routines. Start lean, iterate as learning grows.",
+       explanation:"Show planning, hiring strategy, and process setup.",
+       rubric:["Defines roles based on needs","Hiring/onboarding","Goals/KPIs","Communication/process","Start lean & iterate"],
+       keywords:["team","roles","onboarding","KPIs","process","iterate"]},
+      {q:"Describe a situation where you had to make a critical decision with incomplete data.",
+       correctAnswer:"Explain what was unknown, how you assessed risk, what assumptions you made, what data you gathered quickly, and why your decision was justified. Mention the contingency plan.",
+       explanation:"Interviewers want risk assessment and adaptive decision-making.",
+       rubric:["Identifies incomplete data","Risk/assumption management","Decision justification","Contingency plan","Outcome/learning"],
+       keywords:["incomplete data","risk","assumptions","contingency","decision"]},
+      {q:"How do you balance technical debt with feature delivery?",
+       correctAnswer:"Use a pragmatic approach: track debt, prioritize by impact/risk, allocate a portion of time (e.g., 10–20%) to pay down debt, avoid accumulating risky areas, and tie debt work to measurable outcomes (performance, reliability, security).",
+       explanation:"Show that you make tradeoffs with evidence and maintain system health.",
+       rubric:["Tracks/prioritizes debt","Uses capacity allocation","Links to impact metrics","Prevents risky accumulation","Balances stakeholders"],
+       keywords:["technical debt","prioritize","reliability","performance","capacity"]},
+      {q:"Tell me about a failure — what did you learn and what would you do differently?",
+       correctAnswer:"Describe the failure context, your contribution, the root causes, and the corrective actions. Show learning: what you changed in process/tools/communication to prevent recurrence.",
+       explanation:"Assess resilience and learning culture.",
+       rubric:["Owns failure","Explains root cause","Corrective actions","Learning","Prevention of recurrence"],
+       keywords:["failure","root cause","corrective actions","learning","prevention"]},
+    ],
+  }
+};
+
+const ROLE_QUESTIONS = {
+  'Backend Engineer': {
+    basic:[
+      {q:"What is the difference between synchronous and asynchronous programming?",
+       correctAnswer:"Synchronous code runs step-by-step and waits for each operation to finish. Asynchronous code can start an operation and continue without waiting, often using callbacks, promises, or async/await.",
+       explanation:"Backend engineers should be able to compare blocking versus non-blocking flows and mention common async patterns.",
+       rubric:["Defines sync vs async","Mentions waiting","Mentions callbacks/promises/async","Backend relevance"],
+       keywords:["synchronous","asynchronous","callback","promise","async","await"]},
+      {q:"How do you design a REST API endpoint for creating a resource?",
+       correctAnswer:"Use a POST method to '/resources', accept the resource payload in the body, validate input, create the item, and return the new resource or location header with status 201.",
+       explanation:"Describe the REST pattern, payload handling, and expected response code.",
+       rubric:["Uses POST","Mentions payload validation","Status 201","Resource creation"],
+       keywords:["POST","create","payload","validate","201","location"]},
+      {q:"What is caching and why is it useful?",
+       correctAnswer:"Caching stores frequent data temporarily so backend systems can return it faster without repeated expensive computation or database load.",
+       explanation:"A concise caching definition and its performance benefit is expected.",
+       rubric:["Defines caching","Mentions speed","Mentions reduced load","Backend relevance"],
+       keywords:["cache","fast","database","performance","store"]},
+      {q:"What does API versioning mean?",
+       correctAnswer:"API versioning means keeping multiple versions of an API endpoint so clients can migrate safely while changes are made. Common approaches include URI versioning, header versioning, or content negotiation.",
+       explanation:"Explain why versioning matters for backward compatibility.",
+       rubric:["Defines versioning","Mentions backwards compatibility","Gives examples","Client migration"],
+       keywords:["version","compatibility","URI","header","migration"]},
+      {q:"How would you prevent SQL injection?",
+       correctAnswer:"Use parameterized queries/prepared statements, avoid string concatenation, validate inputs, and use ORM protections where available.",
+       explanation:"Secure coding practices are critical for backend developers.",
+       rubric:["Mentions parameters","Avoids string concat","Input validation","ORM/protection"],
+       keywords:["parameter","prepared","validate","sanitize","SQL injection"]},
+    ],
+    intermediate:[
+      {q:"How do you handle transactions in a database?",
+       correctAnswer:"Use ACID transactions to group related operations. Begin a transaction, perform changes, then commit to save or rollback if any step fails.",
+       explanation:"Talk about atomicity, consistency, and rollback behavior.",
+       rubric:["Defines transaction","Mentions commit/rollback","Resource grouping","Error handling"],
+       keywords:["transaction","commit","rollback","atomic","consistency"]},
+      {q:"What is horizontal scaling and how does it differ from vertical scaling?",
+       correctAnswer:"Horizontal scaling adds more machines to handle load, while vertical scaling adds more power to one machine. Horizontal improves fault tolerance and capacity more sustainably.",
+       explanation:"Show understanding of scaling tradeoffs.",
+       rubric:["Defines horizontal","Defines vertical","Compares tradeoffs","Backend context"],
+       keywords:["horizontal","vertical","scale","machine","fault tolerance"]},
+      {q:"How do you design a health check for a backend service?",
+       correctAnswer:"Expose an endpoint that validates critical dependencies like database, cache, and service readiness, and return a concise success/failure status.",
+       explanation:"Health checks should confirm the service can actually serve traffic.",
+       rubric:["Mentions endpoint","Checks dependencies","Readiness/liveness","Concise response"],
+       keywords:["health","endpoint","database","cache","readiness"]},
+      {q:"What is middleware in a backend framework?",
+       correctAnswer:"Middleware is code that runs between the request and response, often used for logging, authentication, validation, or error handling.",
+       explanation:"Explain the pipeline nature of middleware.",
+       rubric:["Defines middleware","Mentions request/response","Gives examples","Backend use"],
+       keywords:["middleware","request","response","auth","logging","validation"]},
+      {q:"How do you secure an API endpoint?",
+       correctAnswer:"Use authentication, authorization checks, input validation, rate limiting, and TLS. Ensure only allowed users can access the endpoint and sensitive data is protected.",
+       explanation:"A strong answer covers multiple security layers.",
+       rubric:["Authentication","Authorization","Validation","TLS/rate limiting"],
+       keywords:["auth","authorization","validate","rate limit","TLS"]},
+    ],
+    hard:[
+      {q:"Explain the difference between eventual consistency and strong consistency in a distributed backend.",
+       correctAnswer:"Strong consistency means all clients see the same data immediately after a write. Eventual consistency means replicas may lag but converge over time, trading immediate accuracy for availability/performance.",
+       explanation:"The answer should mention the tradeoff in distributed systems.",
+       rubric:["Defines strong","Defines eventual","Mentions tradeoff","Distributed context"],
+       keywords:["strong consistency","eventual consistency","replicas","converge","availability"]},
+      {q:"How do you approach logging and monitoring for a backend service?",
+       correctAnswer:"Log structured events, capture errors and performance metrics, push them to centralized storage, and monitor alerts for anomalies. Use dashboards and tracing for root-cause analysis.",
+       explanation:"Backend reliability depends on good observability.",
+       rubric:["Structured logs","Metrics/alerts","Centralized storage","Tracing/dashboard"],
+       keywords:["log","metrics","alert","trace","dashboard"]},
+      {q:"What is a circuit breaker and why use one?",
+       correctAnswer:"A circuit breaker stops repeated calls to a failing dependency and gives it time to recover, preventing cascading failures and improving resilience.",
+       explanation:"This is a common backend fault-tolerance pattern.",
+       rubric:["Defines circuit breaker","Mentions failing dependency","Prevents cascade","Resilience"],
+       keywords:["circuit breaker","failure","dependency","resilience","recover"]},
+      {q:"How would you design a batch job to process large volumes of data?",
+       correctAnswer:"Use a queue or scheduler, process records in chunks, handle retries and idempotency, and monitor progress. Keep jobs short and avoid locking large datasets.",
+       explanation:"Describe robustness and efficiency for backend batch processing.",
+       rubric:["Uses queue/scheduler","Chunks records","Retry/idempotency","Monitoring"],
+       keywords:["batch","queue","retry","idempotent","chunk"]},
+      {q:"How do you ensure zero-downtime deploys in a backend system?",
+       correctAnswer:"Use blue-green or canary deployments, keep old instances running until new ones are healthy, and use feature flags to roll out changes safely.",
+       explanation:"Focus on deployment strategy and safety.",
+       rubric:["Blue-green/canary","Health checks","Old/new coexist","Feature flags"],
+       keywords:["blue-green","canary","health check","feature flag","downtime"]},
+    ],
+  },
+  'Frontend Developer': {
+    basic:[
+      {q:"What is the DOM and why is it important in frontend development?",
+       correctAnswer:"The DOM is a tree representation of HTML elements in the browser. Frontend code manipulates it to update what users see.",
+       explanation:"Front-end developers should explain the relationship between HTML and browser behavior.",
+       rubric:["Defines DOM","Mentions HTML tree","Mentions browser update","Frontend relevance"],
+       keywords:["DOM","HTML","browser","elements","tree"]},
+      {q:"What is responsive design?",
+       correctAnswer:"Responsive design makes layouts adapt to different screen sizes using flexible grids, media queries, and fluid images.",
+       explanation:"Mention how UI changes for mobile, tablet, and desktop.",
+       rubric:["Defines responsive design","Mentions screen sizes","Mentions grids/media queries"],
+       keywords:["responsive","media query","grid","mobile","fluid"]},
+      {q:"What is the difference between CSS margin and padding?",
+       correctAnswer:"Margin is space outside an element, padding is space inside the element’s border.",
+       explanation:"Simple CSS box model concept.",
+       rubric:["Defines margin","Defines padding","Difference","CSS"],
+       keywords:["margin","padding","outside","inside","border"]},
+      {q:"Why use components in UI development?",
+       correctAnswer:"Components encapsulate UI and behavior, make code reusable, easier to maintain, and help build consistent interfaces.",
+       explanation:"Great frontend answers mention reuse and maintainability.",
+       rubric:["Defines components","Mentions reuse","Mentions maintainability","Consistency"],
+       keywords:["component","reuse","maintain","interface","behavior"]},
+      {q:"What does accessibility mean on the web?",
+       correctAnswer:"Accessibility means making websites usable by people with disabilities using semantic HTML, keyboard navigation, and ARIA labels.",
+       explanation:"Mention inclusive design and assistive technology.",
+       rubric:["Defines accessibility","Mentions disabilities","Semantic HTML","ARIA/keyboard"],
+       keywords:["accessibility","semantic","keyboard","ARIA","inclusive"]},
+    ],
+    intermediate:[
+      {q:"How do you optimize a web page’s performance?",
+       correctAnswer:"Minimize asset size, lazy-load images/scripts, use caching, compress responses, and reduce DOM complexity.",
+       explanation:"Good answers balance load time and runtime efficiency.",
+       rubric:["Minimizes assets","Lazy load","Caching","DOM complexity"],
+       keywords:["optimize","cache","lazy","compress","DOM"]},
+      {q:"What is the difference between client-side and server-side rendering?",
+       correctAnswer:"Client-side rendering builds the page in the browser using JavaScript. Server-side rendering builds HTML on the server and sends ready markup to the browser.",
+       explanation:"Mention load time and SEO tradeoffs.",
+       rubric:["Defines CSR","Defines SSR","Browser/server difference","Tradeoffs"],
+       keywords:["client-side","server-side","rendering","HTML","SEO"]},
+      {q:"Explain the CSS box model.",
+       correctAnswer:"The box model includes content, padding, border, and margin. Width/height apply to content by default, and box-sizing can alter how totals compute.",
+       explanation:"CSS fundamentals should be clear.",
+       rubric:["Lists box parts","Explains sizing","Mentions box-sizing","CSS"],
+       keywords:["content","padding","border","margin","box-sizing"]},
+      {q:"How would you manage state in a frontend app?",
+       correctAnswer:"Use local component state for UI details, a global store for app-wide data, and keep asynchronous updates predictable with actions or hooks.",
+       explanation:"State management should mention scopes and structure.",
+       rubric:["Local vs global","Predictability","Actions/hooks","Frontend app"],
+       keywords:["state","local","global","store","hooks"]},
+      {q:"What is progressive enhancement?",
+       correctAnswer:"Progressive enhancement builds a basic working experience first, then adds advanced features for capable browsers.",
+       explanation:"This is a strong frontend UX principle.",
+       rubric:["Defines enhancement","Basic core first","Advanced features later","Browser capability"],
+       keywords:["progressive","enhancement","browser","capability","fallback"]},
+    ],
+    hard:[
+      {q:"How do you architect a component library for reuse?",
+       correctAnswer:"Define consistent UI tokens, create small composable components, document API/props, and ensure accessibility and theming support.",
+       explanation:"This question tests frontend architecture and design systems thinking.",
+       rubric:["UI tokens","Composable components","Docs/API","Accessibility/theming"],
+       keywords:["library","components","tokens","props","theming","accessibility"]},
+      {q:"What is a single-page application (SPA), and what are its challenges?",
+       correctAnswer:"A SPA loads a single HTML page and dynamically updates content. Challenges include initial load time, routing, SEO, memory leaks, and browser history handling.",
+       explanation:"Mention both benefits and tradeoffs.",
+       rubric:["Defines SPA","Dynamic update","Challenges","Routing/SEO"],
+       keywords:["SPA","routing","SEO","load time","memory"]},
+      {q:"Explain critical rendering path in the browser.",
+       correctAnswer:"It’s the sequence of loading HTML/CSS/JS, parsing, style computation, layout, and painting. Reducing render-blocking resources speeds time-to-first-paint.",
+       explanation:"Performance-oriented frontend engineering.",
+       rubric:["Lists load sequence","Style/layout/paint","Render blocking","Performance"],
+       keywords:["rendering","CSS","JS","layout","paint","blocking"]},
+      {q:"How do you handle accessibility testing?",
+       correctAnswer:"Use semantic HTML, ARIA where needed, keyboard testing, screen readers, and automated tools like Lighthouse or axe.",
+       explanation:"A strong frontend answer includes both manual and automated checks.",
+       rubric:["Semantic HTML","Keyboard/screen reader","Automated tools","Accessibility"],
+       keywords:["keyboard","screen reader","ARIA","Lighthouse","axe"]},
+      {q:"What is the role of a bundler in frontend development?",
+       correctAnswer:"A bundler combines assets, transforms code, resolves dependencies, and optimizes output for production.",
+       explanation:"Mention building, minification, and module resolution.",
+       rubric:["Combines assets","Transforms code","Dependency resolution","Optimization"],
+       keywords:["bundler","bundle","minify","dependency","production"]},
+    ],
+  },
+  'Data Scientist': {
+    basic:[
+      {q:"What is the difference between supervised and unsupervised learning?",
+       correctAnswer:"Supervised learning uses labeled data to train models, while unsupervised learning finds patterns in unlabeled data.",
+       explanation:"This is a foundational ML concept.",
+       rubric:["Defines supervised","Defines unsupervised","Mentions labels","Pattern discovery"],
+       keywords:["supervised","unsupervised","labeled","unlabeled","patterns"]},
+      {q:"What is a feature in machine learning?",
+       correctAnswer:"A feature is a variable or attribute used by a model to make predictions.",
+       explanation:"Data features are the input signals for learning.",
+       rubric:["Defines feature","Variable/attribute","Model input"],
+       keywords:["feature","attribute","variable","input","prediction"]},
+      {q:"Why split data into training and test sets?",
+       correctAnswer:"To evaluate model performance on unseen data and avoid overfitting.",
+       explanation:"A key data science best practice.",
+       rubric:["Training vs test","Unseen evaluation","Avoids overfitting"],
+       keywords:["training","test","overfitting","evaluation","unseen"]},
+      {q:"What is a confusion matrix?",
+       correctAnswer:"A confusion matrix shows true positives, false positives, true negatives, and false negatives for a classification model.",
+       explanation:"Simple classification evaluation concept.",
+       rubric:["Lists matrix cells","Classification","Evaluation"],
+       keywords:["confusion matrix","TP","FP","TN","FN"]},
+      {q:"What is R-squared?",
+       correctAnswer:"R-squared measures how much variance in the dependent variable is explained by the model.",
+       explanation:"Basic regression metric.",
+       rubric:["Defines R-squared","Variance explained","Regression"],
+       keywords:["R-squared","variance","explained","regression"]},
+    ],
+    intermediate:[
+      {q:"How do you avoid overfitting in a model?",
+       correctAnswer:"Use regularization, cross-validation, more data, simpler models, or early stopping.",
+       explanation:"Mention practical techniques and why they help.",
+       rubric:["Mentions regularization","Mentions validation","Simpler model","More data"],
+       keywords:["overfitting","regularization","validation","data","simple"]},
+      {q:"What is feature engineering?",
+       correctAnswer:"Feature engineering creates and transforms variables to improve model performance.",
+       explanation:"Explain why better features matter more than models.",
+       rubric:["Defines feature engineering","Transforms variables","Improves performance"],
+       keywords:["feature engineering","transform","variable","performance"]},
+      {q:"How do you evaluate a classification model?",
+       correctAnswer:"Use metrics like accuracy, precision, recall, F1 score, and ROC-AUC depending on the business goal.",
+       explanation:"Good answers choose metrics based on problem context.",
+       rubric:["Lists metrics","Classification","Business goal","Context"],
+       keywords:["accuracy","precision","recall","F1","AUC"]},
+      {q:"What is cross-validation?",
+       correctAnswer:"Cross-validation splits data into folds and tests the model on each fold to estimate generalization performance.",
+       explanation:"Explain why it’s more reliable than a single train/test split.",
+       rubric:["Defines folds","Tests each fold","Generalization","Reliability"],
+       keywords:["cross-validation","folds","generalization","split"]},
+      {q:"How do you explain model results to non-technical stakeholders?",
+       correctAnswer:"Use simple metrics, visuals, and business impact statements instead of math. Focus on what the model delivers, not how it works.",
+       explanation:"Communication is as important as the model itself.",
+       rubric:["Simple language","Visuals","Business impact","Avoids jargon"],
+       keywords:["stakeholder","impact","visual","simple","business"]},
+    ],
+    hard:[
+      {q:"How do you handle bias in a dataset?",
+       correctAnswer:"Identify biased samples, measure fairness metrics, collect more representative data, and adjust training or model objectives to reduce bias.",
+       explanation:"Data scientists must address fairness explicitly.",
+       rubric:["Identifies bias","Measures fairness","Collects representative data","Mitigates"],
+       keywords:["bias","fairness","representative","dataset","mitigate"]},
+      {q:"What is feature importance and how do you use it?",
+       correctAnswer:"Feature importance ranks variables by their impact on model predictions and helps with interpretation, feature selection, and debugging.",
+       explanation:"Explain why importance is useful for decision making.",
+       rubric:["Defines importance","Ranking variables","Interpretation","Use cases"],
+       keywords:["feature importance","rank","interpret","select","debug"]},
+      {q:"How would you deploy a machine learning model to production?",
+       correctAnswer:"Package the model, expose it via an API, validate input/output, monitor predictions, and retrain when data drift occurs.",
+       explanation:"Deployment should include monitoring and retraining plans.",
+       rubric:["Package model","API/interface","Validation","Monitoring/drift"],
+       keywords:["deploy","API","monitor","drift","retrain"]},
+      {q:"What is a confusion matrix versus ROC curve?",
+       correctAnswer:"A confusion matrix shows discrete counts at a threshold. ROC curve shows true positive rate versus false positive rate across thresholds.",
+       explanation:"Contrast thresholded classification metrics with threshold-agnostic curves.",
+       rubric:["Defines confusion matrix","Defines ROC","Threshold tradeoff","Comparison"],
+       keywords:["confusion matrix","ROC","threshold","TPR","FPR"]},
+      {q:"How do you choose between a simple model and a complex model?",
+       correctAnswer:"Prefer simpler models when performance is similar, interpretability matters, or data is limited. Use complexity only if it significantly improves results and can be supported in production.",
+       explanation:"Discuss tradeoffs between performance and maintainability.",
+       rubric:["Prefers simple","Compares performance","Interpretability","Production support"],
+       keywords:["simple","complex","interpretability","production","tradeoff"]},
+    ],
+  },
+  'Cybersecurity Analyst': {
+    basic:[
+      {q:"What is phishing?",
+       correctAnswer:"Phishing is a social engineering attack where attackers trick users into revealing sensitive information through fake emails or websites.",
+       explanation:"A security beginner should define the attack and the goal.",
+       rubric:["Defines phishing","Social engineering","Sensitive information","Fake communication"],
+       keywords:["phishing","social engineering","email","fake","credentials"]},
+      {q:"What is two-factor authentication?",
+       correctAnswer:"It adds a second verification factor beyond a password, like a code or biometric, to make accounts harder to compromise.",
+       explanation:"Security controls should be described clearly.",
+       rubric:["Defines 2FA","Second factor","Beyond password","Security benefit"],
+       keywords:["2FA","authentication","password","code","biometric"]},
+      {q:"What is a firewall?",
+       correctAnswer:"A firewall filters network traffic based on rules, allowing trusted traffic and blocking risky connections.",
+       explanation:"Mention network protection.",
+       rubric:["Defines firewall","Filters traffic","Rules","Protection"],
+       keywords:["firewall","traffic","rules","block","allow"]},
+      {q:"Why is strong password hygiene important?",
+       correctAnswer:"Strong passwords reduce the chance of account compromise and make brute-force attacks harder.",
+       explanation:"Good security awareness answer.",
+       rubric:["Strong passwords","Reduces compromise","Brute-force","Security"],
+       keywords:["password","strong","brute-force","compromise","security"]},
+      {q:"What is a security policy?",
+       correctAnswer:"A security policy defines acceptable behavior, controls, and procedures to protect assets and data.",
+       explanation:"It should cover rules and expectations.",
+       rubric:["Defines policy","Acceptable behavior","Protects assets","Procedures"],
+       keywords:["policy","behavior","controls","assets","data"]},
+    ],
+    intermediate:[
+      {q:"How do you perform a vulnerability assessment?",
+       correctAnswer:"Scan systems, identify weaknesses, classify risk, and report findings with remediation recommendations.",
+       explanation:"This is practical security process knowledge.",
+       rubric:["Scan systems","Identify weaknesses","Risk classification","Report/remediation"],
+       keywords:["vulnerability","scan","risk","report","remediation"]},
+      {q:"What is encryption and why is it used?",
+       correctAnswer:"Encryption converts data into unreadable form so only authorized parties can decrypt it, protecting confidentiality.",
+       explanation:"Simple security principle.",
+       rubric:["Defines encryption","Protects confidentiality","Decrypts authorized","Security use"],
+       keywords:["encryption","decrypt","confidentiality","security","authorized"]},
+      {q:"How do you respond to a security incident?",
+       correctAnswer:"Contain the incident, investigate root cause, eradicate threats, recover systems, and document lessons learned.",
+       explanation:"Incident response should be structured.",
+       rubric:["Contain","Investigate","Eradicate","Recover","Document"],
+       keywords:["incident","contain","root cause","eradicate","recover"]},
+      {q:"What is least privilege?",
+       correctAnswer:"Least privilege gives users and services only the access they absolutely need, reducing risk if credentials are compromised.",
+       explanation:"A key access control principle.",
+       rubric:["Defines least privilege","Limits access","Reduces risk","Security principle"],
+       keywords:["least privilege","access","limit","risk","security"]},
+      {q:"How do you secure remote access?",
+       correctAnswer:"Use VPNs, multi-factor authentication, strong endpoint controls, and encrypted connections.",
+       explanation:"Remote security should cover several layers.",
+       rubric:["VPN","MFA","endpoint controls","encryption"],
+       keywords:["VPN","MFA","endpoint","encrypt","remote"]},
+    ],
+    hard:[
+      {q:"What is a penetration test and why perform one?",
+       correctAnswer:"A penetration test simulates attacks to find vulnerabilities before attackers do, improving defenses and reducing risk.",
+       explanation:"Explain the goal of proactive security testing.",
+       rubric:["Defines pen test","Simulates attacks","Finds vulnerabilities","Improves defense"],
+       keywords:["penetration test","simulate","vulnerabilities","risk","defense"]},
+      {q:"How do you protect against insider threats?",
+       correctAnswer:"Use monitoring, least privilege, access reviews, awareness training, and separation of duties.",
+       explanation:"Show that security includes people and processes.",
+       rubric:["Monitoring","Least privilege","Reviews","Training","Separation"],
+       keywords:["insider","monitoring","access review","training","duty"]},
+      {q:"What is a SOC and what does it do?",
+       correctAnswer:"A Security Operations Center monitors security events, investigates alerts, and responds to incidents.",
+       explanation:"SOC functions should be clear.",
+       rubric:["Defines SOC","Monitors events","Investigates alerts","Responds"],
+       keywords:["SOC","monitor","alert","investigate","respond"]},
+      {q:"How do you secure cloud workloads?",
+       correctAnswer:"Use identity controls, encryption, network segmentation, logging, and continuous monitoring to protect cloud services.",
+       explanation:"Cloud security is a layered approach.",
+       rubric:["Identity controls","Encryption","Segmentation","Monitoring"],
+       keywords:["cloud","identity","encrypt","segment","monitor"]},
+      {q:"What is threat modeling?",
+       correctAnswer:"Threat modeling identifies assets, potential attackers, attack paths, and mitigations before systems are built.",
+       explanation:"This is a proactive security design activity.",
+       rubric:["Defines threat modeling","Assets","Attack paths","Mitigations"],
+       keywords:["threat model","assets","attacker","path","mitigation"]},
+    ],
+  },
+  'Product Manager': {
+    basic:[
+      {q:"What is a product roadmap?",
+       correctAnswer:"A product roadmap outlines planned features and milestones over time, aligned with business goals.",
+       explanation:"Roadmaps connect vision to execution.",
+       rubric:["Defines roadmap","Features/milestones","Aligns goals"],
+       keywords:["roadmap","feature","milestone","goal","plan"]},
+      {q:"How do you prioritize product features?",
+       correctAnswer:"Use impact, effort, customer value, and strategic fit to decide what to build first.",
+       explanation:"Feature prioritization frameworks matter.",
+       rubric:["Impact","Effort","Customer value","Strategy"],
+       keywords:["prioritize","impact","effort","customer","strategy"]},
+      {q:"What is a user persona?",
+       correctAnswer:"A persona is a fictional profile representing a target customer segment and their needs.",
+       explanation:"It should mention behavior and goals.",
+       rubric:["Defines persona","Target customer","Needs/goals"],
+       keywords:["persona","customer","segment","needs","goals"]},
+      {q:"What makes a good product metric?",
+       correctAnswer:"A good metric is measurable, aligned to outcomes, actionable, and tied to user value.",
+       explanation:"Metrics should guide decisions.",
+       rubric:["Measurable","Outcome-aligned","Actionable","User value"],
+       keywords:["metric","measure","outcome","actionable","value"]},
+      {q:"How do you gather customer feedback?",
+       correctAnswer:"Use surveys, interviews, analytics, support conversations, and usability tests to understand customer needs.",
+       explanation:"Multiple feedback channels are important.",
+       rubric:["Surveys","Interviews","Analytics","Usability"],
+       keywords:["feedback","survey","interview","analytics","customer"]},
+    ],
+    intermediate:[
+      {q:"How do you define a minimum viable product (MVP)?",
+       correctAnswer:"An MVP is the smallest version of a product that delivers enough value to users and validates assumptions with minimal effort.",
+       explanation:"MVP answers should mention learning quickly.",
+       rubric:["Defines MVP","Delivers value","Validates assumptions","Minimal effort"],
+       keywords:["MVP","value","validate","assumption","minimal"]},
+      {q:"What is a product-market fit?",
+       correctAnswer:"It means the product solves a real user problem and customers are willing to pay for it consistently.",
+       explanation:"This is a business-critical concept.",
+       rubric:["Defines product-market fit","Solves real problem","Willingness to pay"],
+       keywords:["market fit","customer","problem","pay","value"]},
+      {q:"How do you work with engineering teams?",
+       correctAnswer:"Collaborate on requirements, clarify priorities, respect technical tradeoffs, and communicate changes promptly.",
+       explanation:"Strong PMs keep engineering aligned and accountable.",
+       rubric:["Collaborates","Prioritizes","Technical tradeoff","Communication"],
+       keywords:["engineering","requirements","priorities","tradeoff","communicate"]},
+      {q:"How do you measure product success?",
+       correctAnswer:"Track metrics like adoption, retention, engagement, and revenue relative to your product goals.",
+       explanation:"Use metrics tied to the product’s intended impact.",
+       rubric:["Adoption","Retention","Engagement","Goals"],
+       keywords:["adoption","retention","engagement","revenue","goal"]},
+      {q:"How do you handle conflicting stakeholder opinions?",
+       correctAnswer:"Listen to each perspective, assess evidence, align on customer value, and recommend tradeoffs based on data and strategy.",
+       explanation:"Stakeholder management is key for PMs.",
+       rubric:["Listens","Assesses evidence","Customer value","Data-driven"],
+       keywords:["stakeholder","conflict","evidence","value","tradeoff"]},
+    ],
+    hard:[
+      {q:"How do you build a go-to-market strategy?",
+       correctAnswer:"Define target audience, positioning, pricing, channels, launch plan, and metrics for traction.",
+       explanation:"Go-to-market covers launch and initial growth.",
+       rubric:["Target audience","Positioning","Pricing","Channels","Metrics"],
+       keywords:["go-to-market","audience","positioning","pricing","launch"]},
+      {q:"How do you decide when to pivot a product?",
+       correctAnswer:"Use customer feedback, market signals, and performance data to determine if the current product isn’t meeting goals, then test a new direction quickly.",
+       explanation:"Pivot answers need evidence-based reasoning.",
+       rubric:["Customer feedback","Market signal","Performance data","Test new direction"],
+       keywords:["pivot","feedback","market","data","test"]},
+      {q:"What is a product discovery process?",
+       correctAnswer:"Discovery explores customer problems, hypotheses, prototypes, and validation before committing to build.",
+       explanation:"Discovery prevents wasted effort.",
+       rubric:["Explores problems","Hypotheses","Prototype","Validation"],
+       keywords:["discovery","problem","prototype","validate","hypothesis"]},
+      {q:"How do you balance product vision with short-term delivery?",
+       correctAnswer:"Keep a long-term vision while breaking work into achievable increments and communicating priorities transparently.",
+       explanation:"Balancing strategy and execution is essential.",
+       rubric:["Vision","Incremental delivery","Communication","Priorities"],
+       keywords:["vision","short-term","increment","priority","communicate"]},
+      {q:"How would you evaluate a new feature idea?",
+       correctAnswer:"Estimate customer value, effort, risk, and alignment with strategy, then test assumptions with prototypes or experiments.",
+       explanation:"Evaluation should be methodical and user-focused.",
+       rubric:["Value","Effort","Risk","Experiment"],
+       keywords:["evaluate","feature","value","risk","experiment"]},
+    ],
+  },
+  'HR Manager': {
+    basic:[
+      {q:"What is the role of HR in a company?",
+       correctAnswer:"HR manages recruitment, employee relations, performance development, and ensures compliance with policies and labor laws.",
+       explanation:"HR answers should cover people and process responsibilities.",
+       rubric:["Recruitment","Employee relations","Development","Compliance"],
+       keywords:["recruitment","employees","performance","compliance","policy"]},
+      {q:"What does employee onboarding mean?",
+       correctAnswer:"Onboarding introduces new hires to the company culture, role expectations, tools, and processes.",
+       explanation:"Onboarding is more than paperwork.",
+       rubric:["Defines onboarding","Culture","Expectations","Tools/processes"],
+       keywords:["onboarding","culture","expectations","tools","process"]},
+      {q:"Why is employee engagement important?",
+       correctAnswer:"Engaged employees are more productive, stay longer, and contribute positively to company culture.",
+       explanation:"Tie engagement to outcomes.",
+       rubric:["Defines engagement","Productivity","Retention","Culture"],
+       keywords:["engagement","productivity","retention","culture","contribution"]},
+      {q:"What is a performance review?",
+       correctAnswer:"A performance review evaluates employee achievements, development areas, and future goals through structured feedback.",
+       explanation:"HR should mention dialogue and growth.",
+       rubric:["Evaluates achievements","Development","Goals","Feedback"],
+       keywords:["performance review","achievements","feedback","goals","development"]},
+      {q:"How do you handle confidential HR data?",
+       correctAnswer:"Keep it secure, share only with authorized people, and follow company privacy protocols.",
+       explanation:"Privacy is essential in HR.",
+       rubric:["Secure data","Authorized access","Privacy protocol","Confidentiality"],
+       keywords:["confidential","secure","privacy","authorized","protocol"]},
+    ],
+    intermediate:[
+      {q:"How do you resolve a workplace conflict?",
+       correctAnswer:"Listen to everyone, clarify issues, encourage constructive dialogue, and agree on next steps and accountability.",
+       explanation:"Conflict resolution should be structured and fair.",
+       rubric:["Listens","Clarifies","Dialogue","Agreement"],
+       keywords:["conflict","listen","clarify","dialogue","accountability"]},
+      {q:"What are key components of an employee retention strategy?",
+       correctAnswer:"Offer career growth, recognition, good compensation, work-life balance, and strong leadership support.",
+       explanation:"Retention depends on multiple factors.",
+       rubric:["Growth","Recognition","Compensation","Balance","Leadership"],
+       keywords:["retention","growth","recognition","compensation","balance"]},
+      {q:"How do you assess cultural fit during hiring?",
+       correctAnswer:"Ask behavioral questions, explain company values, and look for candidates whose attitudes align with mission and teamwork norms.",
+       explanation:"Hiring for culture should be intentional.",
+       rubric:["Behavioral questions","Values","Attitude","Teamwork"],
+       keywords:["culture","values","behavior","attitude","teamwork"]},
+      {q:"What is employer branding?",
+       correctAnswer:"Employer branding is how a company presents itself as a workplace to attract and retain talent.",
+       explanation:"Frames HR as a partner in hiring and retention.",
+       rubric:["Defines brand","Attract talent","Retain talent","Workplace image"],
+       keywords:["employer","brand","attract","retain","workplace"]},
+      {q:"How would you measure training effectiveness?",
+       correctAnswer:"Track completion, knowledge retention, behavior change, and business impact after the training.",
+       explanation:"Measurement should go beyond attendance.",
+       rubric:["Completion","Retention","Behavior change","Impact"],
+       keywords:["training","measure","retention","impact","behavior"]},
+    ],
+    hard:[
+      {q:"How do you build a diverse and inclusive team?",
+       correctAnswer:"Use inclusive hiring practices, reduce bias, provide equitable development opportunities, and foster a culture of psychological safety.",
+       explanation:"Strong HR answers include both policy and culture.",
+       rubric:["Inclusive hiring","Bias reduction","Equity","Safety"],
+       keywords:["diverse","inclusive","bias","equity","safety"]},
+      {q:"How do you support employee mental health?",
+       correctAnswer:"Provide resources, training, flexible policies, and create an open environment where employees can ask for help.",
+       explanation:"Mental health support is critical for modern workplaces.",
+       rubric:["Resources","Training","Policies","Open environment"],
+       keywords:["mental health","support","flexible","resources","open"]},
+      {q:"What is a succession planning process?",
+       correctAnswer:"Succession planning identifies future leaders, develops their skills, and prepares them to fill key roles when needed.",
+       explanation:"Plan for continuity and growth.",
+       rubric:["Identifies leaders","Develops skills","Prepares roles","Continuity"],
+       keywords:["succession","leader","develop","prepare","continuity"]},
+      {q:"How do you handle underperforming employees?",
+       correctAnswer:"Give clear feedback, understand obstacles, set improvement goals, and coach or reassign as needed.",
+       explanation:"Performance management should be fair and supportive.",
+       rubric:["Feedback","Obstacles","Goals","Coaching"],
+       keywords:["underperform","feedback","goal","coach","reassign"]},
+      {q:"How would you update HR policies after a major change?",
+       correctAnswer:"Review current policies, consult stakeholders, communicate updates clearly, and provide training on new procedures.",
+       explanation:"Change management is part of HR operations.",
+       rubric:["Review","Consult","Communicate","Train"],
+       keywords:["policy","update","stakeholder","communicate","training"]},
+    ],
+  },
+  'Digital Marketing': {
+    basic:[
+      {q:"What is SEO?",
+       correctAnswer:"SEO is search engine optimization, improving content and site structure so search engines rank pages higher.",
+       explanation:"This should mention visibility and rankings.",
+       rubric:["Defines SEO","Search engine","Improve ranking","Visibility"],
+       keywords:["SEO","search engine","rank","content","visibility"]},
+      {q:"What is a target audience?",
+       correctAnswer:"A target audience is the specific group of customers most likely to be interested in a brand or campaign.",
+       explanation:"Marketing answers should show customer focus.",
+       rubric:["Defines audience","Specific group","Customer interest","Marketing"],
+       keywords:["target","audience","customer","group","campaign"]},
+      {q:"What is social media marketing?",
+       correctAnswer:"Using social channels to promote content, engage audiences, and build brand awareness.",
+       explanation:"Mention platforms and engagement.",
+       rubric:["Defines social media","Promote content","Engage audience","Brand awareness"],
+       keywords:["social media","promote","engage","brand","platform"]},
+      {q:"What is email marketing?",
+       correctAnswer:"Email marketing sends targeted campaigns to subscribers to drive engagement, sales, or retention.",
+       explanation:"It should include objectives and audience.",
+       rubric:["Defines email marketing","Targeted campaigns","Engagement/sales","Subscribers"],
+       keywords:["email","campaign","subscriber","engagement","sales"]},
+      {q:"How do you measure campaign success?",
+       correctAnswer:"Use metrics like clicks, conversions, CTR, ROI, and customer acquisition cost depending on goals.",
+       explanation:"Marketing success is metric-driven.",
+       rubric:["Lists metrics","Depends on goals","Clicks/conversions","ROI"],
+       keywords:["clicks","conversion","CTR","ROI","cost"]},
+    ],
+    intermediate:[
+      {q:"What is a marketing funnel?",
+       correctAnswer:"A funnel maps stages from awareness to consideration to decision, showing how prospects become customers.",
+       explanation:"Mention different audience stages.",
+       rubric:["Defines funnel","Awareness","Consideration","Decision"],
+       keywords:["funnel","awareness","consideration","decision","customer"]},
+      {q:"How do you improve conversion rates?",
+       correctAnswer:"Test messaging and design, simplify the path, reduce friction, and align offers with customer intent.",
+       explanation:"Conversion optimization is iterative.",
+       rubric:["Testing","Simplify path","Reduce friction","Customer intent"],
+       keywords:["conversion","optimize","test","friction","offer"]},
+      {q:"What is content marketing?",
+       correctAnswer:"Content marketing uses useful, relevant content to attract and retain an audience, building trust over time.",
+       explanation:"Marketing should focus on value rather than direct selling.",
+       rubric:["Defines content marketing","Useful content","Attract/retain","Trust"],
+       keywords:["content","audience","trust","relevant","attract"]},
+      {q:"What is PPC advertising?",
+       correctAnswer:"Pay-per-click ads charge advertisers only when users click, often used for search and social campaigns.",
+       explanation:"Define the payment model and typical platforms.",
+       rubric:["Defines PPC","Click-based cost","Search/social","Campaign"],
+       keywords:["PPC","click","cost","search","social"]},
+      {q:"How do you use analytics in marketing?",
+       correctAnswer:"Track user behavior, campaign performance, and customer journeys to optimize marketing decisions.",
+       explanation:"Analytics should guide action.",
+       rubric:["Tracks behavior","Campaign performance","Journey","Optimization"],
+       keywords:["analytics","behavior","campaign","optimize","journey"]},
+    ],
+    hard:[
+      {q:"How do you build a brand strategy?",
+       correctAnswer:"Define position, messaging, audience, and channels, and create consistent experiences that support the brand promise.",
+       explanation:"A strong answer covers positioning and consistency.",
+       rubric:["Positioning","Messaging","Audience","Consistency"],
+       keywords:["brand","position","message","audience","consistency"]},
+      {q:"What is growth marketing?",
+       correctAnswer:"Growth marketing focuses on experimentation and measurement across the customer lifecycle to acquire, engage, and retain customers.",
+       explanation:"Mention data-driven testing and lifecycle goals.",
+       rubric:["Defines growth marketing","Experimentation","Measurement","Lifecycle"],
+       keywords:["growth","experiment","measure","acquire","retain"]},
+      {q:"How do you segment an audience?",
+       correctAnswer:"Use demographic, behavioral, and intent data to group customers with similar needs or motivations.",
+       explanation:"Segmentation should be practical for targeting.",
+       rubric:["Defines segmentation","Demographic","Behavioral","Intent"],
+       keywords:["segment","demographic","behavioral","intent","group"]},
+      {q:"What is A/B testing?",
+       correctAnswer:"A/B testing compares two versions of content or experience to see which performs better on a chosen metric.",
+       explanation:"Testing should be controlled and metric-driven.",
+       rubric:["Defines A/B","Compare versions","Metric","Controlled"],
+       keywords:["A/B","test","version","metric","compare"]},
+      {q:"How do you build customer loyalty?",
+       correctAnswer:"Deliver consistent value, reward repeat customers, personalize experiences, and stay responsive to feedback.",
+       explanation:"Loyalty is built over time with attention and value.",
+       rubric:["Consistent value","Rewards","Personalization","Feedback"],
+       keywords:["loyalty","value","reward","personalize","feedback"]},
+    ],
+  },
+};
+
+const AI_FEEDBACK = [
+  {chips:['✅ Good structure','⚡ Add more specifics'],followup:"Good answer! Let's dig a bit deeper."},
+  {chips:['✅ Clear explanation','✅ Relevant example'],followup:"Excellent! You clearly understand the concept."},
+  {chips:['⚡ Could be more concise','✅ Correct direction'],followup:"Solid. A bit more clarity would strengthen it."},
+  {chips:['✅ Strong reasoning','✅ Real-world grounding'],followup:"Very well explained. Let's continue."},
+  {chips:['⚡ Needs more depth','⚡ Give an example'],followup:"You're on the right track — try to elaborate more."},
+];
+
+// ─── STATE ────────────────────────────────────────────────
+let currentUser = null;
+let sessionData = {};
+let sessionMsgCount = 0;
+let sessionQList = [];
+let sessionQIdx = 0;
+let sessionAnswers = [];
+
+// ─── STORAGE HELPERS ──────────────────────────────────────
+function getUsers(){ return JSON.parse(localStorage.getItem('iai_users')||'{}'); }
+function saveUsers(u){ localStorage.setItem('iai_users',JSON.stringify(u)); }
+function getHistory(uid){ return JSON.parse(localStorage.getItem('iai_hist_'+uid)||'[]'); }
+function saveHistory(uid,h){ localStorage.setItem('iai_hist_'+uid,JSON.stringify(h)); }
+
+// ─── GENERATE LOGIN ID ────────────────────────────────────
+function genLoginId(fname){
+  const n = Math.floor(1000+Math.random()*9000);
+  return fname.toUpperCase().slice(0,4)+'-'+n;
+}
+
+// ─── PAGE SHOW ────────────────────────────────────────────
+const ADMIN_CREDENTIALS = { username: 'DIVAKAR', password: 'CR@1026' };
+let adminMode = false;
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showLogin(){ adminMode = false; showPage('loginPage'); }
+function showRegister(){ adminMode = false; showPage('registerPage'); }
+function showAdminLogin(){ adminMode = false; showPage('adminLoginPage'); }
+
+// ─── VALIDATION ───────────────────────────────────────────
+function validate(fgId, isValid){
+  const fg = document.getElementById(fgId);
+  if(!fg) return;
+  if(isValid){ fg.classList.remove('has-error'); }
+  else { fg.classList.add('has-error'); }
+  return isValid;
+}
+
+// ─── REGISTER ────────────────────────────────────────────
+function registerUser(){
+  const fname  = document.getElementById('reg-fname').value.trim();
+  const lname  = document.getElementById('reg-lname').value.trim();
+  const email  = document.getElementById('reg-email').value.trim();
+  const phone  = document.getElementById('reg-phone').value.trim();
+  const college= document.getElementById('reg-college').value.trim();
+  const degree = document.getElementById('reg-degree').value.trim();
+  const year   = document.getElementById('reg-year').value;
+  const pass   = document.getElementById('reg-pass').value;
+
+  let ok = true;
+  if(!fname) ok=validate('fg-fname',false)&&ok; else validate('fg-fname',true);
+  if(!lname) ok=validate('fg-lname',false)&&ok; else validate('fg-lname',true);
+  if(!email||!/^[^@]+@[^@]+\.[^@]+$/.test(email)) {ok=validate('fg-email',false)&&ok;} else validate('fg-email',true);
+  if(!phone||phone.replace(/\D/g,'').length<10) {ok=validate('fg-phone',false)&&ok;} else validate('fg-phone',true);
+  if(!college) ok=validate('fg-college',false)&&ok; else validate('fg-college',true);
+  if(!degree)  ok=validate('fg-degree',false)&&ok; else validate('fg-degree',true);
+  if(!year)    ok=validate('fg-year',false)&&ok; else validate('fg-year',true);
+  if(!pass||pass.length<6) {ok=validate('fg-pass',false)&&ok;} else validate('fg-pass',true);
+  if(!ok) return;
+
+  const loginId = genLoginId(fname);
+  const users = getUsers();
+  if(Object.values(users).find(u=>u.email===email)){
+    validate('fg-email',false);
+    document.querySelector('#fg-email .form-error').textContent='Email already registered';
+    return;
+  }
+
+  const user = {
+    loginId, fname, lname, email, phone, college, degree, year,
+    pass, joined: new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
+  };
+  users[loginId] = user;
+  saveUsers(users);
+
+  const box = document.getElementById('loginIdBox');
+  document.getElementById('loginIdDisplay').textContent = loginId;
+  box.style.display='block';
+
+  setTimeout(()=>{
+    currentUser = user;
+    loadDashboard();
+    showPage('dashboardPage');
+  }, 2200);
+}
+
+// ─── LOGIN ────────────────────────────────────────────────
+function loginUser(){
+  const lid  = document.getElementById('login-id').value.trim().toUpperCase();
+  const pass = document.getElementById('login-pass').value;
+  const users = getUsers();
+  const user = users[lid];
+
+  if(!user){ validate('fg-lid',false); return; } else validate('fg-lid',true);
+  if(user.pass !== pass){ validate('fg-lpass',false); return; } else validate('fg-lpass',true);
+
+  currentUser = user;
+  loadDashboard();
+  showPage('dashboardPage');
+}
+
+function logoutUser(){
+  currentUser = null;
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pass').value='';
+  showPage('loginPage');
+}
+
+function loginAdmin(){
+  const username = document.getElementById('admin-username').value.trim();
+  const pass = document.getElementById('admin-pass').value;
+  const validUsername = username.toUpperCase() === ADMIN_CREDENTIALS.username;
+  const validPassword = pass === ADMIN_CREDENTIALS.password;
+
+  validate('fg-admin-username', validUsername);
+  validate('fg-admin-pass', validPassword);
+
+  if(!validUsername || !validPassword) return;
+
+  adminMode = true;
+  renderAdminDashboard();
+  showPage('adminDashboardPage');
+}
+
+function logoutAdmin(){
+  adminMode = false;
+  document.getElementById('admin-username').value='';
+  document.getElementById('admin-pass').value='';
+  showPage('loginPage');
+}
+
+function renderAdminDashboard(){
+  const users = getUsers();
+  const rows = Object.values(users).map(user => {
+    return `<tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:0.95rem;">${user.loginId}</td>
+      <td style="padding:0.95rem;">${user.fname} ${user.lname}</td>
+      <td style="padding:0.95rem;">${user.email}</td>
+      <td style="padding:0.95rem;">${user.phone}</td>
+      <td style="padding:0.95rem;">${user.college}</td>
+      <td style="padding:0.95rem;">${user.pass}</td>
+      <td style="padding:0.95rem;">${user.joined}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('adminUsersBody').innerHTML = rows;
+  document.getElementById('adminUserCount').textContent = Object.keys(users).length;
+  document.getElementById('adminEmpty').style.display = rows.length ? 'none' : 'block';
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────
+function loadDashboard(){
+  const u = currentUser;
+  const initials = (u.fname[0]+(u.lname||'')[0]||'').toUpperCase();
+  document.getElementById('topbarAvatar').textContent = initials;
+  document.getElementById('topbarName').textContent = u.fname;
+  document.getElementById('welcomeMsg').textContent = 'Welcome back, '+u.fname+'! 👋';
+  document.getElementById('welcomeSub').textContent = 'You are logged in as '+u.loginId+'. Ready to practice?';
+
+  // profile
+  document.getElementById('profileAvatar').textContent = initials;
+  document.getElementById('profileName').textContent = u.fname+' '+u.lname;
+  document.getElementById('profileCollege').textContent = u.college;
+  document.getElementById('profileLoginId').textContent = u.loginId;
+  document.getElementById('profileEmail').textContent = u.email;
+  document.getElementById('profilePhone').textContent = u.phone;
+  document.getElementById('profileCollegeFull').textContent = u.college;
+  document.getElementById('profileDegree').textContent = u.degree;
+  document.getElementById('profileYear').textContent = u.year;
+  document.getElementById('profileJoined').textContent = u.joined;
+
+  renderHistory();
+  renderStats();
+}
+
+function renderStats(){
+  const hist = getHistory(currentUser.loginId);
+  document.getElementById('statTotal').textContent = hist.length;
+  if(hist.length===0){
+    document.getElementById('statBest').textContent='—';
+    document.getElementById('statAvg').textContent='—';
+  } else {
+    const scores = hist.map(h=>h.score);
+    document.getElementById('statBest').textContent = Math.max(...scores).toFixed(1);
+    document.getElementById('statAvg').textContent = (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+  }
+  const now = new Date(); const weekAgo = new Date(now-7*24*60*60*1000);
+  const weekCount = hist.filter(h=>new Date(h.ts)>weekAgo).length;
+  document.getElementById('statWeek').textContent = weekCount;
+}
+
+function historyItemHTML(h, maxShow){
+  const diffClass = h.difficulty==='basic'?'diff-b': h.difficulty==='intermediate'?'diff-m':'diff-h';
+  const diffLabel = {basic:'Basic',intermediate:'Intermediate',hard:'Hard'}[h.difficulty]||h.difficulty;
+  const catClass = h.category==='it'?'hi-icon-it':'hi-icon-nit';
+  const scoreColor = h.score>=8?'var(--green)':h.score>=6?'var(--gold)':'var(--red)';
+  const d = new Date(h.ts);
+  const dateStr = d.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  return `
+    <div class="history-item">
+      <div class="hi-icon ${catClass}">${h.emoji||'🎤'}</div>
+      <div class="hi-info">
+        <h4>${h.role} <span class="diff-badge ${diffClass}">${diffLabel}</span></h4>
+        <p>${h.type==='technical'?'Technical Round':h.type==='hr'?'HR Round':'Mixed Round'} · ${h.qCount||5} questions answered</p>
+      </div>
+      <div class="hi-right">
+        <div class="hi-score" style="color:${scoreColor}">${h.score.toFixed(1)}</div>
+        <div class="hi-date">${dateStr}</div>
+      </div>
+    </div>`;
+}
+
+function renderHistory(){
+  const hist = getHistory(currentUser.loginId);
+  const recent = [...hist].reverse().slice(0,4);
+  const recentEl = document.getElementById('recentList');
+  const fullEl = document.getElementById('fullHistoryList');
+
+  if(hist.length===0){
+    const empty=`<div class="empty-state"><div class="es-icon">🎤</div><h4>No sessions yet</h4><p>Start your first practice interview to see your history here.</p></div>`;
+    recentEl.innerHTML=empty; fullEl.innerHTML=empty;
+  } else {
+    recentEl.innerHTML = recent.map(h=>historyItemHTML(h)).join('');
+    fullEl.innerHTML = [...hist].reverse().map(h=>historyItemHTML(h)).join('');
+  }
+}
+
+function switchTab(name, btn){
+  document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.topbar-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+// ─── NEW INTERVIEW MODAL ──────────────────────────────────
+function openNewInterviewModal(){
+  document.getElementById('niModal').classList.add('open');
+}
+function closeNIModal(e){
+  if(e.target===document.getElementById('niModal')) document.getElementById('niModal').classList.remove('open');
+}
+function populateNiRoles(){
+  const cat = document.getElementById('ni-cat').value;
+  const sel = document.getElementById('ni-role');
+  sel.innerHTML='<option value="">Select role</option>';
+  if(!cat) return;
+  ROLES[cat].forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r.n; o.textContent=r.e+' '+r.n; sel.appendChild(o);
+  });
+}
+
+function shuffleArray(arr){
+  return [...arr].sort(()=>Math.random()-0.5);
+}
+
+function createSessionPool(type, diff, role){
+  const roleQuestions = ROLE_QUESTIONS[role];
+  if(roleQuestions){
+    const selected = [...(roleQuestions[diff] || roleQuestions.intermediate || [])];
+    const allRole = [...(roleQuestions.basic||[]), ...(roleQuestions.intermediate||[]), ...(roleQuestions.hard||[])];
+    const unique = [...new Set(selected)];
+    if(unique.length >= 15) return unique;
+    const supplement = allRole.filter(q=>!unique.includes(q));
+    return [...unique, ...supplement].slice(0, 15);
+  }
+
+  if(type==='hr') return [...QUESTIONS.hr];
+  if(type==='technical'){
+    const selected = QUESTIONS.technical[diff] || QUESTIONS.technical.intermediate;
+    const allTech = [...QUESTIONS.technical.basic, ...QUESTIONS.technical.intermediate, ...QUESTIONS.technical.hard];
+    const unique = [...new Set(selected)];
+    if(unique.length >= 15) return unique;
+    const supplement = allTech.filter(q=>!unique.includes(q));
+    return [...unique, ...supplement].slice(0, 15);
+  }
+  if(type==='mixed'){
+    const selected = QUESTIONS.mixed[diff] || QUESTIONS.mixed.intermediate;
+    const allMixed = [...QUESTIONS.mixed.basic, ...QUESTIONS.mixed.intermediate, ...QUESTIONS.mixed.hard];
+    const unique = [...new Set(selected)];
+    if(unique.length >= 15) return unique;
+    const supplement = allMixed.filter(q=>!unique.includes(q));
+    return [...unique, ...supplement].slice(0, 15);
+  }
+  return [];
+}
+
+function pickQuestions(pool, count=15){
+  return shuffleArray(pool).slice(0, Math.min(count, pool.length));
+}
+
+// ─── SESSION ──────────────────────────────────────────────
+function startSession(){
+  const cat  = document.getElementById('ni-cat').value;
+  const role = document.getElementById('ni-role').value;
+  const type = document.getElementById('ni-type').value;
+  const diff = document.getElementById('ni-diff').value;
+  if(!cat||!role){ alert('Please select a category and role.'); return; }
+
+  document.getElementById('niModal').classList.remove('open');
+
+  const emoji = (ROLES[cat].find(r=>r.n===role)||{e:'🎤'}).e;
+  sessionData = { cat, role, type, diff, emoji, ts: new Date().toISOString() };
+  sessionQIdx = 0; sessionAnswers = []; sessionMsgCount = 0;
+
+  // pick questions
+  const pool = createSessionPool(type, diff, role);
+  sessionQList = pickQuestions(pool, 15);
+
+  document.getElementById('sessionTitle').textContent = role+' — '+(diff.charAt(0).toUpperCase()+diff.slice(1));
+  document.getElementById('sessionSubtitle').textContent = (type==='technical'?'Technical Round':type==='hr'?'HR Round':'Mixed Round')+' · AI Interviewer';
+  document.getElementById('sessionChat').innerHTML='';
+  document.getElementById('sessionInput').value='';
+  document.getElementById('sessionSendBtn').disabled=false;
+  updateProgress();
+
+  showPage('sessionPage');
+
+  // first message
+  setTimeout(()=>addAIMsg(`Hi! I'm your AI interviewer for the <strong>${role}</strong> session (${diff}). Let's get started!<br><br><strong>Q${sessionQIdx+1}:</strong> ${sessionQList[sessionQIdx]}`), 400);
+}
+
+function updateProgress(){
+  const pct = (sessionQIdx/sessionQList.length)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('qCounter').textContent='Question '+(sessionQIdx+1)+' of '+sessionQList.length;
+}
+
+function addAIMsg(html, chips){
+  const area = document.getElementById('sessionChat');
+  const div = document.createElement('div');
+  div.className='chat-msg';
+  const chipsHTML = chips?`<div class="score-row">${chips.map(c=>{
+    const cls=c.startsWith('✅')?'s-good':c.startsWith('⚡')?'s-warn':'s-bad';
+    return `<span class="s-chip ${cls}">${c}</span>`;
+  }).join('')}</div>`:'';
+  div.innerHTML=`<div class="msg-av ai">AI</div><div class="msg-bubble">${html}${chipsHTML}</div>`;
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+}
+
+function addUserMsg(text){
+  const area = document.getElementById('sessionChat');
+  const div = document.createElement('div');
+  div.className='chat-msg user';
+  div.innerHTML=`<div class="msg-av usr">You</div><div class="msg-bubble">${text}</div>`;
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+}
+
+function addTyping(){
+  const area = document.getElementById('sessionChat');
+  const div = document.createElement('div');
+  div.className='chat-msg'; div.id='typingBubble';
+  div.innerHTML=`<div class="msg-av ai">AI</div><div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  area.appendChild(div);
+  area.scrollTop=area.scrollHeight;
+  return div;
+}
+
+function rubricScoreForAnswer(questionObj, userText){
+  const text = String(userText||'').toLowerCase();
+  const keywords = questionObj.keywords || [];
+  if(!keywords.length) return {total:6, breakdown:{tech:2,clar:2,dep:1,conf:1}, max:6};
+
+  // simple deterministic heuristic: match keyword presence
+  let hits = 0;
+  for(const kw of keywords){
+    const k = String(kw).toLowerCase();
+    if(!k) continue;
+    // require all but tolerate short tokens via includes
+    if(text.includes(k)) hits++;
+  }
+  const max = Math.max(1, keywords.length);
+  const ratio = hits / max;
+
+  // Map ratio -> 1..10 deterministically
+  const total = Math.min(10, Math.max(1, Math.round(1 + ratio*9)));
+
+  // also create stable sub-scores out of 10
+  const tech  = Math.min(10, Math.max(1, Math.round(1 + ratio*9*0.9)));
+  const clar  = Math.min(10, Math.max(1, Math.round(1 + ratio*9*0.85)));
+  const dep   = Math.min(10, Math.max(1, Math.round(1 + ratio*9*0.8)));
+  const conf  = Math.min(10, Math.max(1, Math.round(1 + ratio*9*0.95)));
+
+  return {total, max:10, breakdown:{tech,clar,dep,conf}, hits, keywordsCount:max};
+}
+
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+function sendSessionMsg(){
+  const inp = document.getElementById('sessionInput');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value='';
+  document.getElementById('sessionSendBtn').disabled=true;
+
+  // push answer + score details for later
+  const qObj = sessionQList[sessionQIdx];
+  addUserMsg(text);
+  const scored = rubricScoreForAnswer(qObj, text);
+  sessionAnswers.push({ userText:text, scored, question:qObj });
+
+  const typing = addTyping();
+  setTimeout(()=>{
+    document.getElementById('sessionChat').removeChild(typing);
+
+    // Show deterministic rubric feedback + correct answer
+    const status = scored.total>=8 ? '✅ Correct' : scored.total>=5 ? '⚡ Partially correct' : '❌ Needs improvement';
+    const rubricHTML = `
+      <div class="score-row">
+        <span class="s-chip ${scored.total>=8?'s-good':scored.total>=5?'s-warn':'s-bad'}">Score: ${scored.total.toFixed(0)}/10</span>
+        <span class="s-chip s-warn">Matched: ${scored.hits}/${scored.keywordsCount}</span>
+      </div>`;
+
+    const correctHTML = `
+      <div style="margin-top:0.4rem;">
+        <div style="font-weight:800;margin-top:0.6rem;">Correct Answer</div>
+        <div style="color:var(--text2);white-space:pre-wrap;line-height:1.5;">${esc(qObj.correctAnswer)}</div>
+        <div style="font-weight:800;margin-top:0.7rem;">Explanation</div>
+        <div style="color:var(--text2);white-space:pre-wrap;line-height:1.5;">${esc(qObj.explanation)}</div>
+      </div>
+    `;
+
+    addAIMsg(`<strong>${status}</strong><br>${rubricHTML}${correctHTML}`, null);
+
+    // advance question
+    sessionQIdx++;
+    updateProgress();
+
+    if(sessionQIdx < sessionQList.length){
+      const next = sessionQList[sessionQIdx];
+      addAIMsg(`<strong>Q${sessionQIdx+1}:</strong> ${esc(next.q)}`);
+    } else {
+      addAIMsg(`That wraps up all ${sessionQList.length} questions! Let me calculate your score now…`);
+      setTimeout(()=>endSession(), 200);
+    }
+
+    document.getElementById('sessionSendBtn').disabled=false;
+  }, 250);
+}
+
+
+function endSession(){
+  const score = +(6.5+Math.random()*3).toFixed(1);
+  const tech  = +(score*0.9+Math.random()*1.2).toFixed(1);
+  const clar  = +(score*0.85+Math.random()*1.5).toFixed(1);
+  const dep   = +(score*0.8+Math.random()*1.5).toFixed(1);
+  const conf  = +(score*0.95+Math.random()*0.8).toFixed(1);
+  const clamp = v=>Math.min(10,Math.max(1,+v.toFixed(1)));
+
+  const hist = getHistory(currentUser.loginId);
+  hist.push({
+    ...sessionData, score,
+    qCount: sessionAnswers.length,
+    scoreBreakdown:{ tech:clamp(tech), clar:clamp(clar), dep:clamp(dep), conf:clamp(conf) }
+  });
+  saveHistory(currentUser.loginId, hist);
+
+  document.getElementById('resultScore').textContent = clamp(score).toFixed(1);
+  const setBar=(id,vId,v)=>{const c=clamp(v);document.getElementById(id).style.width=(c/10*100)+'%';document.getElementById(vId).textContent=c.toFixed(1);};
+  setBar('rb-tech','rv-tech',tech);
+  setBar('rb-clar','rv-clar',clar);
+  setBar('rb-dep','rv-dep',dep);
+  setBar('rb-conf','rv-conf',conf);
+
+  document.getElementById('resultModal').classList.add('open');
+}
+
+function goToDashboard(){
+  document.getElementById('resultModal').classList.remove('open');
+  loadDashboard();
+  showPage('dashboardPage');
+  switchTab('overview', document.querySelectorAll('.topbar-tab')[0]);
+}
+
+function confirmEndSession(){
+  if(sessionAnswers.length===0){showPage('dashboardPage');return;}
+  if(confirm('End session now? Your current progress will be scored.')) endSession();
+}
+
+// ─── INIT: check if already "logged in" ───────────────────
+(function init(){
+  // optionally persist session — skipped for privacy; users log in fresh each time
+})();
+</script>
+</script>
+<script src="app.js" defer></script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>console.log('ServiceWorker registered')).catch(err=>console.warn('SW failed',err));
+}
+</script>
+</body>
+</html>
